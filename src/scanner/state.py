@@ -19,6 +19,5 @@ class State:
             self.transitions[character] = dest_state
 
     def get_dest_state_by_character(self, character):
-        if character not in self.transitions:
-            raise
-        return self.transitions[character]
+        if character in self.transitions:
+            return self.transitions[character]

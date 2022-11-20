@@ -27,10 +27,13 @@ class DFA:
         state_11 = State(11, is_final_state=False, is_star_state=False, state_type=COMMENT)
         state_12 = State(12, is_final_state=True, is_star_state=False, state_type=COMMENT)
         state_13 = State(13, is_final_state=False, is_star_state=False, state_type=COMMENT)
-        state_14 = State(14, is_final_state=True, is_star_state=False, state_type=COMMENT)
+        state_14 = State(14, is_final_state=True, is_star_state=True, state_type=COMMENT)
 
         # Whitespace state
         state_15 = State(15, is_final_state=True, is_star_state=False, state_type=WHITESPACE)
+
+        # Start -> Start (by empty String)
+        state_0.add_transition(state_0, [""])
 
         # Number
         state_0.add_transition(state_1, digits)
