@@ -1,17 +1,18 @@
 states = {}
 
+
 class State:
-    def __init__(self, ID, is_final_state, is_star_state ,type):
-        self.ID = ID
+    def __init__(self, ID, is_final_state, is_star_state, state_type):
+        self.id = ID
         self.is_final_state = is_final_state
         self.is_star_state = is_star_state
-        self.type = type
+        self.type = state_type
         self.transitions = {}
-        states[id] = self
+        states[ID] = self
 
     @staticmethod
-    def get_state_by_id(id):
-        return states[id]
+    def get_state_by_id(ID):
+        return states[ID]
 
     def add_transition(self, dest_state, characters):
         for character in characters:
