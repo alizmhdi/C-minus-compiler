@@ -1,9 +1,9 @@
 states = {}
 
 class State:
-    def __init__(self, ID, is_accept_state, is_star_state ,type):
+    def __init__(self, ID, is_final_state, is_star_state ,type):
         self.ID = ID
-        self.is_accept_state = is_accept_state
+        self.is_final_state = is_final_state
         self.is_star_state = is_star_state
         self.type = type
         self.transitions = {}
@@ -18,4 +18,6 @@ class State:
             self.transitions[character] = dest_state
 
     def get_dest_state_by_character(self, character):
+        if character not in self.transitions:
+            raise
         return self.transitions[character]

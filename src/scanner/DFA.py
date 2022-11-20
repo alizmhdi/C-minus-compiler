@@ -1,39 +1,64 @@
 from src.scanner.config import *
 from src.scanner.state import State
 
+class DFA:
+    def __init__(self):
+        # error_state = State(-1, is_accept_state=False, is_star_state=False, type=ERROR)
+        state_0 = State(0, is_accept_state=False, is_star_state=False, type=START)
 
-def initial_DFA():
-    state_0 = State(0, is_accept_state=False, is_star_state=False, type=START)
+        # Number states
+        state_1 = State(1, is_accept_state=False, is_star_state=False, type=NUMBER)
+        state_2 = State(2, is_accept_state=True, is_star_state=True, type=NUMBER)
 
-    state_1 = State(1, is_accept_state=False, is_star_state=False, type=NUMBER)
-    state_2 = State(2, is_accept_state=True, is_star_state=True, type=NUMBER)
+        # ID states
+        state_3 = State(3, is_accept_state=False, is_star_state=False, type=ID)
+        state_4 = State(4, is_accept_state=True, is_star_state=True, type=ID)
 
-    state_3 = State(3, is_accept_state=False, is_star_state=False, type=ID)
-    state_4 = State(4, is_accept_state=True, is_star_state=True, type=ID)
+        # Symbol states
+        state_5 = State(5, is_accept_state=True, is_star_state=False, type=SYMBOL)
+        state_6 = State(6, is_accept_state=False, is_star_state=False, type=SYMBOL)
+        state_7 = State(7, is_accept_state=True, is_star_state=False, type=SYMBOL)
+        state_8 = State(8, is_accept_state=False, is_star_state=False, type=SYMBOL)
+        state_9 = State(9, is_accept_state=True, is_star_state=True, type=SYMBOL)
 
-    state_5 = State(5, is_accept_state=True, is_star_state=False, type=SYMBOL)
-    state_6 = State(6, is_accept_state=False, is_star_state=False, type=SYMBOL)
-    state_7 = State(7, is_accept_state=True, is_star_state=False, type=SYMBOL)
-    state_8 = State(8, is_accept_state=False, is_star_state=False, type=SYMBOL)
-    state_9 = State(9, is_accept_state=True, is_star_state=True, type=SYMBOL)
+        # Comment states
+        state_10 = State(10, is_accept_state=False, is_star_state=False, type=COMMENT)
+        state_11 = State(11, is_accept_state=False, is_star_state=False, type=COMMENT)
+        state_12 = State(12, is_accept_state=True, is_star_state=False, type=COMMENT)
+        state_13 = State(13, is_accept_state=False, is_star_state=False, type=COMMENT)
+        state_14 = State(14, is_accept_state=True, is_star_state=False, type=COMMENT)
 
-    state_10 = State(10, is_accept_state=False, is_star_state=False, type=COMMENT)
-    state_11 = State(11, is_accept_state=False, is_star_state=False, type=COMMENT)
-    state_12 = State(12, is_accept_state=True, is_star_state=False, type=COMMENT)
-    state_13 = State(13, is_accept_state=False, is_star_state=False, type=COMMENT)
-    state_14 = State(14, is_accept_state=False, is_star_state=False, type=COMMENT)
+        # Whitespace state
+        state_15 = State(15, is_accept_state=True, is_star_state=False, type=WHITESPACE)
 
-    state_15 = State(15, is_accept_state=True, is_star_state=False, type=WHITESPACE)
-    #numner
-    state_0.add_transition(state_1, digits)
-    state_1.add_transition(state_1, digits)
-    state_1.add_transition(state_2, symbol + whitespace)
-    #keyword and id
-    state_0.add_transition(state_3, letters)
-    state_3.add_transition(state_3, letters + digits)
-    state_3.add_transition(state_4, symbol + whitespace)
-    #whitespace
-    state_0.add_transition(state_15, whitespace)
-    #symbol
-    #comment
+        # Number
+        state_0.add_transition(state_1, digits)
+        state_1.add_transition(state_1, digits)
+        state_1.add_transition(state_2, all_symbols + whitespace)
 
+        # Keyword and ID
+        state_0.add_transition(state_3, letters)
+        state_3.add_transition(state_3, letters + digits)
+        state_3.add_transition(state_4, all_symbols + whitespace)
+
+        # Whitespace
+        state_0.add_transition(state_15, whitespace)
+
+        #symbol
+        state_0.add_transition(state_5, symbol)
+        state_0.add_transition(state_6, equal_symbol)
+        state_6.add_transition(state_7, equal_symbol)
+        state_6.add_transition(state_9, symbol + slash_symbol + star_symbol + whitespace + letters + digits)
+        state_0.add_transition(state_8, slash_symbol)
+        state_8.add_transition(state_9, symbol + equal_symbol + whitespace + letters + digits)
+
+        # Comment
+        state_8.add_transition(state_10, star_symbol)
+        state_10.add_transition(state_10, symbol + equal_symbol + slash_symbol + whitespace + letters + digits)
+        state_10.add_transition(state_11, star_symbol)
+        state_11.add_transition(state_11, star_symbol)
+        state_11.add_transition(state_10, symbol + equal_symbol + whitespace + letters + digits)
+        state_11.add_transition(state_12, slash_symbol)
+        state_8.add_transition(state_13, slash_symbol)
+        state_13.add_transition(state_13, all_symbols + letters + digits + [' ', '\r', '\t', '\v', '\f'])
+        state_13.add_transition(state_14, new_line)
