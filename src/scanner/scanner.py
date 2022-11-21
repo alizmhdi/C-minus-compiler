@@ -11,7 +11,7 @@ class Scanner:
         self.reader = Reader(input_file)
         self.start_state = states[0]
         self.current_char = ''
-        self.lexical_errors = []
+        self.lexical_errors = {}
 
     def get_next_token(self):
         current_state = self.start_state
@@ -22,7 +22,11 @@ class Scanner:
                 self.current_char = self.reader.read_char()
                 current_state = self.next_state(current_state)
                 if current_state.type == ERROR:
-                    self.lexical_errors.append((token_name + self.current_char, current_state.error_message))
+                    error = (token_name + self.current_char, current_state.error_message)
+                    if self.reader.current_line_number not in self.lexical_errors:
+                        self.lexical_errors[self.reader.current_line_number] = [error]
+                    else:
+                        self.lexical_errors[self.reader.current_line_number].append(error)
                     continue
                 if not self.current_char:
                     return
@@ -33,13 +37,13 @@ class Scanner:
                 if current_state.is_star_state:
                     self.reader.index -= 1
                     if token_name in keywords:
-                        return KEYWORD, token_name
+                        return KEYWORD, token_name, self.reader.current_line_number
                     elif current_state.type == ID:
                         symbol_table.add_lexeme(token_name)
-                    return current_state.type, token_name
+                    return current_state.type, token_name, self.reader.current_line_number
                 elif current_state.is_final_state:
                     token_name += self.current_char
-                    return current_state.type, token_name
+                    return current_state.type, token_name, self.reader.current_line_number
                 token_name += self.current_char
 
     def next_state(self, current_state: State) -> State:

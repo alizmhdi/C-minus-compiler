@@ -1,6 +1,3 @@
-from scanner.config import *
-
-
 class Writer:
     def __init__(self, filename):
         self.filename = filename
@@ -13,20 +10,14 @@ class Writer:
     def close_file(self):
         self.file.close()
 
-    def write_tokens_in_file(self, tokens):
+    def write_in_file(self, items):
         result = ''
-        for token in tokens:
-            if token[0] == WHITESPACE and token[1] == "\n":
-                result += "\n"
-            elif token[0] != WHITESPACE and token[0] != COMMENT:
-                result += f'({token[0]}, {token[1]})'
-        self.file.write(result)
-        self.close_file()
+        for i in items.keys():
+            result += f'{i}.\t'
+            for token in items[i]:
+                result += f'({token[0]}, {token[1]}) '
+            result += '\n'
 
-    def write_lexical_errors_in_file(self, errors):
-        result = ''
-        for error in errors:
-            result += f'({error[0]}, {error[1]})\n'
         self.file.write(result)
         self.close_file()
 
@@ -36,8 +27,3 @@ class Writer:
             result += f'{s}\n'
         self.file.write(result)
         self.close_file()
-
-
-
-
-
