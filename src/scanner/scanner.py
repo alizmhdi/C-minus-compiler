@@ -2,6 +2,7 @@ from scanner.reader import Reader
 from scanner.dfa import DFA
 from scanner.state import states
 from scanner.state import State
+from scanner.config import *
 
 
 class Scanner:
@@ -20,6 +21,15 @@ class Scanner:
             if current_state.id == 0 or (not current_state.is_star_state and not current_state.is_final_state):
                 self.current_char = self.reader.read_char()
                 current_state = self.next_state(current_state)
+                if current_state.type == ERROR:
+                    print((token_name + self.current_char, current_state.error_message))
+                    continue
+                if not self.current_char:
+                    return
+                if current_state == self.start_state:
+                    self.reader.index -= 1
+                    token_name = ""
+                    continue
                 if current_state.is_star_state:
                     self.reader.index -= 1
                     return current_state.type, token_name
@@ -29,4 +39,7 @@ class Scanner:
                 token_name += self.current_char
 
     def next_state(self, current_state: State) -> State:
-        return current_state.get_dest_state_by_character(self.current_char)
+        next_state = current_state.get_dest_state_by_character(self.current_char)
+        if next_state:
+            return next_state
+        return self.start_state

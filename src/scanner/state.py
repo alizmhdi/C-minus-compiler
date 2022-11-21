@@ -2,13 +2,14 @@ states = {}
 
 
 class State:
-    def __init__(self, ID, is_final_state, is_star_state, state_type):
+    def __init__(self, ID, is_final_state, is_star_state, state_type, error_message=""):
         self.id = ID
         self.is_final_state = is_final_state
         self.is_star_state = is_star_state
         self.type = state_type
         self.transitions = {}
         states[ID] = self
+        self.error_message = error_message
 
     @staticmethod
     def get_state_by_id(ID):
