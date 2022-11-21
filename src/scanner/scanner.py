@@ -36,10 +36,10 @@ class Scanner:
                     continue
                 if current_state.is_star_state:
                     self.reader.index -= 1
+                    if current_state.type == ID:
+                        symbol_table.add_lexeme(token_name)
                     if token_name in keywords:
                         return KEYWORD, token_name, self.reader.current_line_number
-                    elif current_state.type == ID:
-                        symbol_table.add_lexeme(token_name)
                     return current_state.type, token_name, self.reader.current_line_number
                 elif current_state.is_final_state:
                     token_name += self.current_char

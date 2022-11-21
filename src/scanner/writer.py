@@ -24,6 +24,6 @@ class Writer:
     def write_lexemes_in_file(self, symbols):
         result = ''
         for s in symbols:
-            result += f'{s}\n'
+            result += f'{symbols.index(s)+1}.\t{s}\n'
         self.file.write(result)
         self.close_file()
