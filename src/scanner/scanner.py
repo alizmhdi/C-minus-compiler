@@ -1,6 +1,7 @@
 from scanner.reader import Reader
 from scanner.state import states
 from scanner.state import State
+from scanner.symbol_table import symbol_table
 from scanner.config import *
 
 
@@ -33,6 +34,8 @@ class Scanner:
                     self.reader.index -= 1
                     if token_name in keywords:
                         return KEYWORD, token_name
+                    elif current_state.type == ID:
+                        symbol_table.add_lexeme(token_name)
                     return current_state.type, token_name
                 elif current_state.is_final_state:
                     token_name += self.current_char

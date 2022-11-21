@@ -30,7 +30,7 @@ class Writer:
         self.file.write(result)
         self.close_file()
 
-    def write_symbols_in_file(self, symbols):
+    def write_lexemes_in_file(self, symbols):
         result = ''
         for s in symbols:
             result += f'{s}\n'

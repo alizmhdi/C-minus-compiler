@@ -1,6 +1,7 @@
 from scanner.scanner import Scanner
 from scanner.writer import Writer
 from scanner.dfa import DFA
+from scanner.symbol_table import symbol_table
 
 if __name__ == '__main__':
     DFA()
@@ -15,3 +16,4 @@ if __name__ == '__main__':
 
     Writer("./tokens.txt").write_tokens_in_file(tokens)
     Writer("./lexical_errors.txt").write_lexical_errors_in_file(scanner.lexical_errors)
+    Writer("./symbol_table.txt").write_lexemes_in_file(symbol_table.lexemes)
