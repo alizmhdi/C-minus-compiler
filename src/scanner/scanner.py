@@ -1,5 +1,4 @@
 from scanner.reader import Reader
-from scanner.dfa import DFA
 from scanner.state import states
 from scanner.state import State
 from scanner.config import *
@@ -9,9 +8,9 @@ class Scanner:
 
     def __init__(self, input_file):
         self.reader = Reader(input_file)
-        DFA()
         self.start_state = states[0]
         self.current_char = ''
+        self.lexical_errors = []
 
     def get_next_token(self):
         current_state = self.start_state
@@ -22,7 +21,7 @@ class Scanner:
                 self.current_char = self.reader.read_char()
                 current_state = self.next_state(current_state)
                 if current_state.type == ERROR:
-                    print((token_name + self.current_char, current_state.error_message))
+                    self.lexical_errors.append((token_name + self.current_char, current_state.error_message))
                     continue
                 if not self.current_char:
                     return
@@ -32,6 +31,8 @@ class Scanner:
                     continue
                 if current_state.is_star_state:
                     self.reader.index -= 1
+                    if token_name in keywords:
+                        return KEYWORD, token_name
                     return current_state.type, token_name
                 elif current_state.is_final_state:
                     token_name += self.current_char
