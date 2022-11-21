@@ -21,6 +21,6 @@ if __name__ == '__main__':
         else:
             tokens[token_line].append(current_token)
 
-    Writer("./tokens.txt").write_in_file(tokens)
-    Writer("./lexical_errors.txt").write_in_file(scanner.lexical_errors)
+    Writer("./tokens.txt").write_tokens_in_file(tokens)
+    Writer("./lexical_errors.txt").write_lexical_errors_in_file(scanner.lexical_errors)
     Writer("./symbol_table.txt").write_lexemes_in_file(symbol_table.lexemes)

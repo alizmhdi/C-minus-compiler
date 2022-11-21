@@ -10,13 +10,29 @@ class Writer:
     def close_file(self):
         self.file.close()
 
-    def write_in_file(self, items):
+    def write_tokens_in_file(self, tokens):
         result = ''
-        for i in items.keys():
+        for i in tokens.keys():
             result += f'{i}.\t'
-            for token in items[i]:
+            for token in tokens[i]:
                 result += f'({token[0]}, {token[1]}) '
             result += '\n'
+        self.file.write(result)
+        self.close_file()
+
+    def write_lexical_errors_in_file(self, errors):
+        result = ''
+        for i in errors.keys():
+            result += f'{i}.\t'
+            for error in errors[i]:
+                if error[1] == 'Unclosed comment':
+                    result += f'({error[0][0:6]} ..., {error[1]}) '
+                else:
+                    result += f'({error[0]}, {error[1]}) '
+            result += '\n'
+
+        if len(errors) == 0:
+            result = 'There is no lexical error.'
 
         self.file.write(result)
         self.close_file()

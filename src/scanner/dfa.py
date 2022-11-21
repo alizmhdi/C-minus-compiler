@@ -67,23 +67,23 @@ class DFA:
 
         # Comment
         state_8.add_transition(state_10, star_symbol)
-        state_10.add_transition(state_10, symbol + equal_symbol + slash_symbol + whitespace + letters + digits)
+        state_10.add_transition(state_10, get_all_chars(['*']))
         state_10.add_transition(state_11, star_symbol)
         state_11.add_transition(state_11, star_symbol)
         state_11.add_transition(state_10, symbol + equal_symbol + whitespace + letters + digits)
         state_11.add_transition(state_12, slash_symbol)
         state_8.add_transition(state_13, slash_symbol)
-        state_13.add_transition(state_13, all_symbols + letters + digits + [' ', '\r', '\t', '\v', '\f'])
+        state_13.add_transition(state_13, get_all_chars(['\n']))
         state_13.add_transition(state_14, new_line)
         state_10.add_transition(unclosed_comment_error_state, [''])
 
-        DFA.set_invalid_input_state_transition(invalid_input_error_state)
+        DFA.set_invalid_input_state_transition(invalid_input_error_state, [state_13, state_10])
         DFA.add_eof_transition(eof_state, [state_10])
 
     @staticmethod
-    def set_invalid_input_state_transition(error_state):
+    def set_invalid_input_state_transition(error_state, exceptions):
         for state in states.values():
-            if not state.is_final_state:
+            if not state.is_final_state and state not in exceptions:
                 state.add_transition(error_state, invalid_chars)
 
     @staticmethod
