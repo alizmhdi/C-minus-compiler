@@ -26,7 +26,7 @@ class Writer:
             result += f'{i}.\t'
             for error in errors[i]:
                 if error[1] == 'Unclosed comment':
-                    result += f'({error[0][0:6]} ..., {error[1]}) '
+                    result += f'({error[0][0:7]}..., {error[1]}) '
                 else:
                     result += f'({error[0]}, {error[1]}) '
             result += '\n'

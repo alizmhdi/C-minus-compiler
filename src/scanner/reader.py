@@ -19,6 +19,7 @@ class Reader:
 
     def read_char(self):
         if self.current_line == '':
+            self.current_line_number -= 1
             self.file.close()
             return ''
         elif self.index >= len(self.current_line):

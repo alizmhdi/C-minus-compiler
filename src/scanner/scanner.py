@@ -23,10 +23,12 @@ class Scanner:
                 current_state = self.next_state(current_state)
                 if current_state.type == ERROR:
                     error = (token_name + self.current_char, current_state.error_message)
-                    if self.reader.current_line_number not in self.lexical_errors:
-                        self.lexical_errors[self.reader.current_line_number] = [error]
+                    error_line = self.find_start_line(self.reader.current_line_number, error[0])
+                    if error_line not in self.lexical_errors:
+                        self.lexical_errors[error_line] = [error]
                     else:
-                        self.lexical_errors[self.reader.current_line_number].append(error)
+                        self.lexical_errors[error_line].append(error)
+                    token_name = ""
                     continue
                 if not self.current_char:
                     return
@@ -51,3 +53,7 @@ class Scanner:
         if next_state:
             return next_state
         return self.start_state
+
+    @staticmethod
+    def find_start_line(current_line, message):
+        return current_line - message.count('\n')
