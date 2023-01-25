@@ -280,4 +280,7 @@ src/lexical_errors.txt
 src/symbol_table.txt
 src/tokens.txt
 *.zip
-# End of https://www.toptal.com/developers/gitignore/api/python,pycharm
+# End of https://www.toptal.com/developers/gitignore/api/python,pycharm\
+# DS_store
+.DS_Store
+**/.DS_Store
