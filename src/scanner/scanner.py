@@ -31,7 +31,7 @@ class Scanner:
                     token_name = ""
                     continue
                 if not self.current_char:
-                    return
+                    return EOF, '$', self.reader.current_line_number
                 if current_state == self.start_state:
                     self.reader.index -= 1
                     token_name = ""
