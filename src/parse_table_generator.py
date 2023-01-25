@@ -1,12 +1,12 @@
 import re
 import json
-import os
+# import os
 
 
 # you can uncomment this once you have
 # made sure bison 3.8.2 is installed.
-os.system('bison grammar.y --report=all')
-os.system('rm grammar.tab.c')
+# os.system('bison grammar.y --report=all')
+# os.system('rm grammar.tab.c')
 
 
 def correct_form(token):
@@ -129,5 +129,5 @@ for t in table['non_terminals'] + table['terminals']:
     if t in table['follow']:
         table['follow'][t] = list(table['follow'][t])
 json_object = json.dumps(table, indent=4)
-with open("table.json", "w") as outfile:
+with open("parser/grammar/table.json", "w") as outfile:
     outfile.write(json_object)
