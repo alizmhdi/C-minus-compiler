@@ -1,0 +1,4 @@
+PRINT    1
+PRINT    4
+PRINT    40
+PRINT    4
