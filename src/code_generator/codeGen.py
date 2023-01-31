@@ -1,7 +1,7 @@
-from src.code_generator.semantic_stack import SemanticStack
-from src.code_generator.program_block import ProgramBlock, Instruction
-from src.code_generator.data_block import DataBlock
-from src.code_generator.temporaries_block import TemporariesBlock
+from code_generator.semantic_stack import SemanticStack
+from code_generator.program_block import ProgramBlock, Instruction
+from code_generator.data_block import DataBlock
+from code_generator.temporaries_block import TemporariesBlock
 
 class CodeGenerator:
     def __init__(self):
