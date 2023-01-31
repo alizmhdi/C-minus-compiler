@@ -10,13 +10,18 @@ class Instruction:
 
 class ProgramBlock:
     def __init__(self):
-        self.program_block = []
+        self.instructions = []
+        self.last_index = 0
 
-    def add_instruction(self, instruction: Instruction) -> None:
-        self.program_block.append(instruction)
+    def add_instruction(self, instruction: Instruction):
+        self.instructions.append(instruction)
+        self.last_index += 1
 
-    def set_instruction(self, index: int, instruction: Instruction) -> None:
-        self.program_block[index] = instruction
+    def set_instruction(self, index: int, instruction: Instruction):
+        self.instructions[index] = instruction
+
+    def increase_index(self):
+        self.last_index += 1
 
     def __str__(self) -> str:
-        return '\n'.join([f'{i}\t{inst}' for i, inst in enumerate(self._instructions)])
+        return '\n'.join([f'{i}\t{inst}' for i, inst in enumerate(self.instructions)])
