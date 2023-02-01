@@ -2578,8 +2578,7 @@ class Parser:
                 self.parse_tree_writer.write(Parser.format_tree(left_rule_node))
                 self.syntax_error_writer.write(self.errors)
                 print(len(self.code_generator.program_block.instructions))
-                for item in self.code_generator.program_block.instructions:
-                    print(item)
+                print(self.code_generator.program_block)
                 return
             elif next_move[0] == 'shift':
                 if current_token:

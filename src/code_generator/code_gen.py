@@ -83,21 +83,22 @@ class CodeGenerator:
         op_1 = self.semantic_stack.pop()
         operator = self.semantic_stack.pop()
         op_2 = self.semantic_stack.pop()
-        t = self.temporaries.get_temp()
+        temp = self.temporaries.get_temp()
         instruction = None
         if operator == '*':
-            instruction = Instruction('MULT', op_1, op_2, t)
+            instruction = Instruction('MULT', op_1, op_2, temp)
         elif operator == '/':
-            instruction = Instruction('DIV', op_1, op_2, t)
+            instruction = Instruction('DIV', op_1, op_2, temp)
         self.program_block.add_instruction(instruction)
+        self.semantic_stack.push(temp)
 
     def func(self):
         pass
 
     def jp(self):
         address = self.semantic_stack.pop()
-        instruction = Instruction('JP', address, ' ', ' ')
-        self.program_block.add_instruction(instruction)
+        instruction = Instruction('JP', self.program_block.last_index, ' ', ' ')
+        self.program_block.set_instruction(address, instruction)
 
     def jpf(self):
         address = self.semantic_stack.pop()
@@ -109,13 +110,14 @@ class CodeGenerator:
         op_1 = self.semantic_stack.pop()
         operator = self.semantic_stack.pop()
         op_2 = self.semantic_stack.pop()
-        t = self.temporaries.get_temp()
+        temp = self.temporaries.get_temp()
         instruction = None
         if operator == '<':
-            instruction = Instruction('LT', op_1, op_2, t)
+            instruction = Instruction('LT', op_1, op_2, temp)
         elif operator == '==':
-            instruction = Instruction('EQ', op_1, op_2, t)
+            instruction = Instruction('EQ', op_1, op_2, temp)
         self.program_block.add_instruction(instruction)
+        self.semantic_stack.push(temp)
 
     def jpf_save(self):
         instruction_address = self.semantic_stack.pop()

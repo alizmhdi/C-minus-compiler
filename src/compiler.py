@@ -8,5 +8,3 @@ from parser.parser import Parser
 DFA()
 parser = Parser()
 parser.parse()
-
-

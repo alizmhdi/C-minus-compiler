@@ -92,6 +92,7 @@ factor: '(' expression ')'
 | var
 | call
 | PNUM NUM
+| call_output
 ;
 call: PID ID '(' args ')'
 ;
@@ -124,5 +125,7 @@ ARRAY_DEC: /* epsilon */
 LABEL_WHILE: /* epsilon */
 ;
 LABEL_SWITCH: /* epsilon */
+;
+call_output: "output" '(' args ')'
 ;
 %%
