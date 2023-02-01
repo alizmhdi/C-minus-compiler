@@ -1,4 +1,3 @@
-import code_generator.program_block
 from scanner.config import *
 from scanner.scanner import Scanner
 from anytree import Node, RenderTree
@@ -37,7 +36,8 @@ grammar = {
         "switch",
         "case",
         "default",
-        "=="
+        "==",
+        "output"
     ],
     "non_terminals": [
         "$accept",
@@ -85,7 +85,8 @@ grammar = {
         "VAR_DEC",
         "ARRAY_DEC",
         "LABEL_WHILE",
-        "LABEL_SWITCH"
+        "LABEL_SWITCH",
+        "call_output"
     ],
     "first": {
         "$accept": [
@@ -137,34 +138,37 @@ grammar = {
         ],
         "statement_list": [
             "if",
-            "return",
-            "switch",
-            "NUM",
-            "ID",
             "break",
-            "while",
-            "(",
+            "switch",
             "{",
-            ";"
+            "(",
+            "ID",
+            ";",
+            "while",
+            "output",
+            "return",
+            "NUM"
         ],
         "statement": [
             "if",
-            "return",
-            "switch",
-            "NUM",
+            ";",
             "ID",
-            "break",
             "while",
-            "(",
+            "break",
+            "output",
+            "switch",
             "{",
-            ";"
+            "(",
+            "return",
+            "NUM"
         ],
         "expression_stmt": [
-            "break",
-            "(",
             ";",
-            "NUM",
-            "ID"
+            "break",
+            "output",
+            "(",
+            "ID",
+            "NUM"
         ],
         "selection_stmt": [
             "if"
@@ -188,57 +192,64 @@ grammar = {
             "default"
         ],
         "expression": [
+            "output",
+            "(",
             "ID",
-            "NUM",
-            "("
+            "NUM"
         ],
         "var": [
             "ID"
         ],
         "simple_expression": [
+            "output",
             "(",
-            "NUM",
-            "ID"
+            "ID",
+            "NUM"
         ],
         "relop": [
-            "<",
-            "=="
+            "==",
+            "<"
         ],
         "additive_expression": [
+            "output",
             "(",
-            "NUM",
-            "ID"
+            "ID",
+            "NUM"
         ],
         "addop": [
-            "-",
-            "+"
+            "+",
+            "-"
         ],
         "term": [
+            "output",
             "(",
-            "NUM",
-            "ID"
+            "ID",
+            "NUM"
         ],
         "mulop": [
-            "/",
-            "*"
+            "*",
+            "/"
         ],
         "factor": [
+            "output",
+            "(",
             "ID",
-            "NUM",
-            "("
+            "NUM"
         ],
         "call": [
             "ID"
         ],
         "args": [
+            "output",
+            "(",
             "ID",
-            "NUM",
-            "("
+            "NUM"
         ],
         "arg_list": [
+            "output",
+            "(",
             "ID",
-            "NUM",
-            "("
+            "NUM"
         ],
         "PID": [],
         "PTYPE": [],
@@ -252,6 +263,9 @@ grammar = {
         "ARRAY_DEC": [],
         "LABEL_WHILE": [],
         "LABEL_SWITCH": [],
+        "call_output": [
+            "output"
+        ],
         "$": [
             "$"
         ],
@@ -341,6 +355,9 @@ grammar = {
         ],
         "==": [
             "=="
+        ],
+        "output": [
+            "output"
         ]
     },
     "follow": {
@@ -349,38 +366,39 @@ grammar = {
             "$"
         ],
         "declaration_list": [
-            "void",
             "int",
+            "void",
             "$"
         ],
         "declaration": [
             "int",
-            "$",
-            "void"
+            "void",
+            "$"
         ],
         "var_declaration": [
             "if",
-            "return",
-            "}",
-            "int",
-            "$",
-            "switch",
-            "void",
-            "NUM",
-            "ID",
             "break",
-            "while",
-            "(",
+            "void",
+            "}",
+            "switch",
             "{",
-            ";"
+            "(",
+            "ID",
+            ";",
+            "while",
+            "$",
+            "int",
+            "output",
+            "return",
+            "NUM"
         ],
         "type_specifier": [
             "ID"
         ],
         "fun_declaration": [
             "int",
-            "$",
-            "void"
+            "void",
+            "$"
         ],
         "params": [
             ")"
@@ -394,255 +412,267 @@ grammar = {
             ","
         ],
         "compound_stmt": [
-            "if",
-            "return",
             "else",
-            "int",
-            "}",
-            "$",
-            "switch",
-            "endif",
-            "void",
-            "case",
-            "ID",
-            "NUM",
-            "default",
+            "if",
             "break",
-            "while",
-            "(",
+            "void",
+            "}",
+            "switch",
             "{",
-            ";"
+            "endif",
+            "(",
+            "ID",
+            ";",
+            "while",
+            "$",
+            "int",
+            "output",
+            "case",
+            "default",
+            "return",
+            "NUM"
         ],
         "local_declarations": [
             "if",
-            "return",
-            "}",
-            "int",
-            "switch",
-            "void",
-            "NUM",
-            "ID",
             "break",
-            "while",
-            "(",
+            "void",
+            "}",
+            "switch",
             "{",
-            ";"
+            "(",
+            "ID",
+            ";",
+            "while",
+            "int",
+            "output",
+            "return",
+            "NUM"
         ],
         "statement_list": [
             "if",
-            "return",
+            "break",
             "}",
             "switch",
-            "case",
-            "ID",
-            "NUM",
-            "default",
-            "break",
-            "while",
-            ";",
             "{",
-            "("
+            "(",
+            "ID",
+            ";",
+            "while",
+            "output",
+            "case",
+            "default",
+            "return",
+            "NUM"
         ],
         "statement": [
-            "if",
-            "return",
             "else",
+            "if",
+            "break",
             "}",
             "switch",
-            "endif",
-            "case",
-            "ID",
-            "NUM",
-            "default",
-            "break",
-            "while",
-            "(",
             "{",
-            ";"
+            "endif",
+            "(",
+            "ID",
+            ";",
+            "while",
+            "output",
+            "case",
+            "default",
+            "return",
+            "NUM"
         ],
         "expression_stmt": [
-            "if",
-            "return",
             "else",
+            "if",
+            "break",
             "}",
             "switch",
-            "endif",
-            "case",
-            "ID",
-            "NUM",
-            "default",
-            "break",
-            "while",
-            "(",
             "{",
-            ";"
+            "endif",
+            "(",
+            "ID",
+            ";",
+            "while",
+            "output",
+            "case",
+            "default",
+            "return",
+            "NUM"
         ],
         "selection_stmt": [
-            "if",
-            "return",
             "else",
+            "if",
+            "break",
             "}",
             "switch",
-            "endif",
-            "case",
-            "ID",
-            "NUM",
-            "default",
-            "break",
-            "while",
-            "(",
             "{",
-            ";"
+            "endif",
+            "(",
+            "ID",
+            ";",
+            "while",
+            "output",
+            "case",
+            "default",
+            "return",
+            "NUM"
         ],
         "iteration_stmt": [
-            "if",
-            "return",
             "else",
+            "if",
+            "break",
             "}",
             "switch",
-            "endif",
-            "case",
-            "ID",
-            "NUM",
-            "default",
-            "break",
-            "while",
-            "(",
             "{",
-            ";"
+            "endif",
+            "(",
+            "ID",
+            ";",
+            "while",
+            "output",
+            "case",
+            "default",
+            "return",
+            "NUM"
         ],
         "return_stmt": [
-            "if",
-            "return",
             "else",
+            "if",
+            "break",
             "}",
             "switch",
-            "endif",
-            "case",
-            "ID",
-            "NUM",
-            "default",
-            "break",
-            "while",
-            "(",
             "{",
-            ";"
+            "endif",
+            "(",
+            "ID",
+            ";",
+            "while",
+            "output",
+            "case",
+            "default",
+            "return",
+            "NUM"
         ],
         "switch_stmt": [
-            "if",
-            "return",
             "else",
+            "if",
+            "break",
             "}",
             "switch",
-            "endif",
-            "case",
-            "ID",
-            "NUM",
-            "default",
-            "break",
-            "while",
-            "(",
             "{",
-            ";"
+            "endif",
+            "(",
+            "ID",
+            ";",
+            "while",
+            "output",
+            "case",
+            "default",
+            "return",
+            "NUM"
         ],
         "case_stmts": [
-            "default",
             "}",
-            "case"
+            "case",
+            "default"
         ],
         "case_stmt": [
-            "default",
             "}",
-            "case"
+            "case",
+            "default"
         ],
         "default_stmt": [
             "}"
         ],
         "expression": [
             ")",
-            "]",
+            ";",
             ",",
-            ";"
+            "]"
         ],
         "var": [
-            "-",
-            "*",
-            ",",
-            "+",
-            "/",
-            "==",
-            "=",
             ")",
-            "<",
+            "==",
+            "+",
+            "-",
             "]",
-            ";"
+            ";",
+            "<",
+            ",",
+            "=",
+            "*",
+            "/"
         ],
         "simple_expression": [
             ")",
-            "]",
+            ";",
             ",",
-            ";"
+            "]"
         ],
         "relop": [
+            "output",
             "(",
-            "NUM",
-            "ID"
+            "ID",
+            "NUM"
         ],
         "additive_expression": [
-            "-",
-            ",",
-            "==",
             ")",
-            "<",
-            "]",
             ";",
-            "+"
+            "==",
+            "<",
+            ",",
+            "+",
+            "-",
+            "]"
         ],
         "addop": [
+            "output",
             "(",
-            "NUM",
-            "ID"
+            "ID",
+            "NUM"
         ],
         "term": [
-            "-",
-            "/",
-            "*",
-            ",",
-            "==",
             ")",
-            "<",
-            "]",
             ";",
-            "+"
+            "/",
+            "==",
+            "<",
+            ",",
+            "*",
+            "+",
+            "-",
+            "]"
         ],
         "mulop": [
+            "output",
             "(",
-            "NUM",
-            "ID"
+            "ID",
+            "NUM"
         ],
         "factor": [
-            "-",
-            "/",
-            "*",
-            ",",
-            "==",
             ")",
-            "<",
-            "]",
             ";",
-            "+"
+            "/",
+            "==",
+            "<",
+            ",",
+            "*",
+            "+",
+            "-",
+            "]"
         ],
         "call": [
-            "-",
-            "/",
-            "*",
-            ",",
-            "==",
             ")",
-            "<",
-            "]",
             ";",
-            "+"
+            "==",
+            "<",
+            ",",
+            "-",
+            "*",
+            "+",
+            "/",
+            "]"
         ],
         "args": [
             ")"
@@ -661,28 +691,29 @@ grammar = {
             "NUM"
         ],
         "P_OP": [
-            "<",
-            "-",
-            "/",
             "*",
+            "+",
+            "/",
+            "-",
             "==",
-            "+"
+            "<"
         ],
         "BREAK_JP": [
             ";"
         ],
         "SAVE": [
             "if",
-            "return",
-            "switch",
-            "NUM",
-            "ID",
-            ":",
             "break",
-            "while",
-            ";",
+            ":",
             "{",
-            "("
+            "switch",
+            "(",
+            "ID",
+            ";",
+            "while",
+            "output",
+            "return",
+            "NUM"
         ],
         "JPF_SAVE": [
             "else"
@@ -701,6 +732,18 @@ grammar = {
         ],
         "LABEL_SWITCH": [
             "("
+        ],
+        "call_output": [
+            ")",
+            ";",
+            "==",
+            "<",
+            ",",
+            "-",
+            "*",
+            "+",
+            "/",
+            "]"
         ]
     },
     "grammar": {
@@ -1115,6 +1158,11 @@ grammar = {
             "NUM"
         ],
         "62": [
+            "factor",
+            "->",
+            "call_output"
+        ],
+        "63": [
             "call",
             "->",
             "PID",
@@ -1123,87 +1171,95 @@ grammar = {
             "args",
             ")"
         ],
-        "63": [
+        "64": [
             "args",
             "->",
             "arg_list"
         ],
-        "64": [
+        "65": [
             "args",
             "->",
             "epsilon"
         ],
-        "65": [
+        "66": [
             "arg_list",
             "->",
             "arg_list",
             ",",
             "expression"
         ],
-        "66": [
+        "67": [
             "arg_list",
             "->",
             "expression"
         ],
-        "67": [
+        "68": [
             "PID",
             "->",
             "epsilon"
         ],
-        "68": [
+        "69": [
             "PTYPE",
             "->",
             "epsilon"
         ],
-        "69": [
+        "70": [
             "PNUM",
             "->",
             "epsilon"
         ],
-        "70": [
+        "71": [
             "P_OP",
             "->",
             "epsilon"
         ],
-        "71": [
+        "72": [
             "BREAK_JP",
             "->",
             "epsilon"
         ],
-        "72": [
+        "73": [
             "SAVE",
             "->",
             "epsilon"
         ],
-        "73": [
+        "74": [
             "JPF_SAVE",
             "->",
             "epsilon"
         ],
-        "74": [
+        "75": [
             "FUNC",
             "->",
             "epsilon"
         ],
-        "75": [
+        "76": [
             "VAR_DEC",
             "->",
             "epsilon"
         ],
-        "76": [
+        "77": [
             "ARRAY_DEC",
             "->",
             "epsilon"
         ],
-        "77": [
+        "78": [
             "LABEL_WHILE",
             "->",
             "epsilon"
         ],
-        "78": [
+        "79": [
             "LABEL_SWITCH",
             "->",
             "epsilon"
+        ],
+        "80": [
+            "call_output",
+            "->",
+            "output",
+            "(",
+            "args",
+            ")"
         ]
     },
     "parse_table": {
@@ -1216,7 +1272,7 @@ grammar = {
             "type_specifier": "goto_6",
             "fun_declaration": "goto_7",
             "PTYPE": "goto_8",
-            "int": "reduce_68"
+            "int": "reduce_69"
         },
         "1": {
             "ID": "reduce_9"
@@ -1231,27 +1287,27 @@ grammar = {
             "type_specifier": "goto_6",
             "fun_declaration": "goto_7",
             "PTYPE": "goto_8",
-            "int": "reduce_68",
+            "int": "reduce_69",
             "$": "reduce_1"
         },
         "4": {
-            "void": "reduce_3",
             "int": "reduce_3",
+            "void": "reduce_3",
             "$": "reduce_3"
         },
         "5": {
             "int": "reduce_4",
-            "$": "reduce_4",
-            "void": "reduce_4"
+            "void": "reduce_4",
+            "$": "reduce_4"
         },
         "6": {
             "PID": "goto_11",
-            "ID": "reduce_67"
+            "ID": "reduce_68"
         },
         "7": {
             "int": "reduce_5",
-            "$": "reduce_5",
-            "void": "reduce_5"
+            "void": "reduce_5",
+            "$": "reduce_5"
         },
         "8": {
             "int": "shift_12"
@@ -1260,8 +1316,8 @@ grammar = {
             "$": "accept"
         },
         "10": {
-            "void": "reduce_2",
             "int": "reduce_2",
+            "void": "reduce_2",
             "$": "reduce_2"
         },
         "11": {
@@ -1274,12 +1330,12 @@ grammar = {
             "[": "shift_14",
             "FUNC": "goto_15",
             "VAR_DEC": "goto_16",
-            ";": "reduce_75",
-            "(": "reduce_74"
+            ";": "reduce_76",
+            "(": "reduce_75"
         },
         "14": {
             "PNUM": "goto_17",
-            "NUM": "reduce_69"
+            "NUM": "reduce_70"
         },
         "15": {
             "(": "shift_18"
@@ -1297,23 +1353,24 @@ grammar = {
             "param_list": "goto_24",
             "param": "goto_25",
             "PTYPE": "goto_8",
-            "int": "reduce_68"
+            "int": "reduce_69"
         },
         "19": {
             "if": "reduce_6",
-            "return": "reduce_6",
-            "}": "reduce_6",
-            "int": "reduce_6",
-            "$": "reduce_6",
-            "switch": "reduce_6",
-            "void": "reduce_6",
-            "NUM": "reduce_6",
-            "ID": "reduce_6",
             "break": "reduce_6",
-            "while": "reduce_6",
-            "(": "reduce_6",
+            "void": "reduce_6",
+            "}": "reduce_6",
+            "switch": "reduce_6",
             "{": "reduce_6",
-            ";": "reduce_6"
+            "(": "reduce_6",
+            "ID": "reduce_6",
+            ";": "reduce_6",
+            "while": "reduce_6",
+            "$": "reduce_6",
+            "int": "reduce_6",
+            "output": "reduce_6",
+            "return": "reduce_6",
+            "NUM": "reduce_6"
         },
         "20": {
             "]": "shift_26"
@@ -1324,7 +1381,7 @@ grammar = {
         },
         "22": {
             "PID": "goto_27",
-            "ID": "reduce_67"
+            "ID": "reduce_68"
         },
         "23": {
             ")": "shift_28"
@@ -1339,7 +1396,7 @@ grammar = {
         },
         "26": {
             "ARRAY_DEC": "goto_30",
-            ";": "reduce_76"
+            ";": "reduce_77"
         },
         "27": {
             "ID": "shift_31"
@@ -1353,7 +1410,7 @@ grammar = {
             "type_specifier": "goto_22",
             "param": "goto_34",
             "PTYPE": "goto_8",
-            "int": "reduce_68"
+            "int": "reduce_69"
         },
         "30": {
             ";": "shift_35"
@@ -1366,23 +1423,24 @@ grammar = {
         "32": {
             "local_declarations": "goto_37",
             "if": "reduce_19",
-            "return": "reduce_19",
-            "}": "reduce_19",
-            "int": "reduce_19",
-            "switch": "reduce_19",
-            "void": "reduce_19",
-            "NUM": "reduce_19",
-            "ID": "reduce_19",
             "break": "reduce_19",
-            "while": "reduce_19",
-            "(": "reduce_19",
+            "void": "reduce_19",
+            "}": "reduce_19",
+            "switch": "reduce_19",
             "{": "reduce_19",
-            ";": "reduce_19"
+            "(": "reduce_19",
+            "ID": "reduce_19",
+            ";": "reduce_19",
+            "while": "reduce_19",
+            "int": "reduce_19",
+            "output": "reduce_19",
+            "return": "reduce_19",
+            "NUM": "reduce_19"
         },
         "33": {
             "int": "reduce_10",
-            "$": "reduce_10",
-            "void": "reduce_10"
+            "void": "reduce_10",
+            "$": "reduce_10"
         },
         "34": {
             ")": "reduce_13",
@@ -1390,19 +1448,20 @@ grammar = {
         },
         "35": {
             "if": "reduce_7",
-            "return": "reduce_7",
-            "}": "reduce_7",
-            "int": "reduce_7",
-            "$": "reduce_7",
-            "switch": "reduce_7",
-            "void": "reduce_7",
-            "NUM": "reduce_7",
-            "ID": "reduce_7",
             "break": "reduce_7",
-            "while": "reduce_7",
-            "(": "reduce_7",
+            "void": "reduce_7",
+            "}": "reduce_7",
+            "switch": "reduce_7",
             "{": "reduce_7",
-            ";": "reduce_7"
+            "(": "reduce_7",
+            "ID": "reduce_7",
+            ";": "reduce_7",
+            "while": "reduce_7",
+            "$": "reduce_7",
+            "int": "reduce_7",
+            "output": "reduce_7",
+            "return": "reduce_7",
+            "NUM": "reduce_7"
         },
         "36": {
             "]": "shift_38"
@@ -1413,20 +1472,21 @@ grammar = {
             "type_specifier": "goto_40",
             "statement_list": "goto_41",
             "PTYPE": "goto_8",
-            "int": "reduce_68",
+            "int": "reduce_69",
             "if": "reduce_21",
-            "return": "reduce_21",
+            "break": "reduce_21",
             "}": "reduce_21",
             "switch": "reduce_21",
-            "case": "reduce_21",
-            "ID": "reduce_21",
-            "NUM": "reduce_21",
-            "default": "reduce_21",
-            "break": "reduce_21",
-            "while": "reduce_21",
-            ";": "reduce_21",
             "{": "reduce_21",
-            "(": "reduce_21"
+            "(": "reduce_21",
+            "ID": "reduce_21",
+            ";": "reduce_21",
+            "while": "reduce_21",
+            "output": "reduce_21",
+            "case": "reduce_21",
+            "default": "reduce_21",
+            "return": "reduce_21",
+            "NUM": "reduce_21"
         },
         "38": {
             ")": "reduce_16",
@@ -1434,22 +1494,23 @@ grammar = {
         },
         "39": {
             "if": "reduce_18",
-            "return": "reduce_18",
-            "}": "reduce_18",
-            "int": "reduce_18",
-            "switch": "reduce_18",
-            "void": "reduce_18",
-            "NUM": "reduce_18",
-            "ID": "reduce_18",
             "break": "reduce_18",
-            "while": "reduce_18",
-            "(": "reduce_18",
+            "void": "reduce_18",
+            "}": "reduce_18",
+            "switch": "reduce_18",
             "{": "reduce_18",
-            ";": "reduce_18"
+            "(": "reduce_18",
+            "ID": "reduce_18",
+            ";": "reduce_18",
+            "while": "reduce_18",
+            "int": "reduce_18",
+            "output": "reduce_18",
+            "return": "reduce_18",
+            "NUM": "reduce_18"
         },
         "40": {
             "PID": "goto_42",
-            "ID": "reduce_67"
+            "ID": "reduce_68"
         },
         "41": {
             ";": "shift_43",
@@ -1461,1026 +1522,1086 @@ grammar = {
             "while": "shift_48",
             "return": "shift_49",
             "switch": "shift_50",
-            "compound_stmt": "goto_51",
-            "statement": "goto_52",
-            "expression_stmt": "goto_53",
-            "selection_stmt": "goto_54",
-            "iteration_stmt": "goto_55",
-            "return_stmt": "goto_56",
-            "switch_stmt": "goto_57",
-            "expression": "goto_58",
-            "var": "goto_59",
-            "simple_expression": "goto_60",
-            "additive_expression": "goto_61",
-            "term": "goto_62",
-            "factor": "goto_63",
-            "call": "goto_64",
-            "PID": "goto_65",
-            "PNUM": "goto_66",
-            "NUM": "reduce_69",
-            "ID": "reduce_67"
+            "output": "shift_51",
+            "compound_stmt": "goto_52",
+            "statement": "goto_53",
+            "expression_stmt": "goto_54",
+            "selection_stmt": "goto_55",
+            "iteration_stmt": "goto_56",
+            "return_stmt": "goto_57",
+            "switch_stmt": "goto_58",
+            "expression": "goto_59",
+            "var": "goto_60",
+            "simple_expression": "goto_61",
+            "additive_expression": "goto_62",
+            "term": "goto_63",
+            "factor": "goto_64",
+            "call": "goto_65",
+            "PID": "goto_66",
+            "PNUM": "goto_67",
+            "call_output": "goto_68",
+            "NUM": "reduce_70",
+            "ID": "reduce_68"
         },
         "42": {
-            "ID": "shift_67"
+            "ID": "shift_69"
         },
         "43": {
-            "if": "reduce_30",
-            "return": "reduce_30",
             "else": "reduce_30",
+            "if": "reduce_30",
+            "break": "reduce_30",
             "}": "reduce_30",
             "switch": "reduce_30",
-            "endif": "reduce_30",
-            "case": "reduce_30",
-            "ID": "reduce_30",
-            "NUM": "reduce_30",
-            "default": "reduce_30",
-            "break": "reduce_30",
-            "while": "reduce_30",
-            "(": "reduce_30",
             "{": "reduce_30",
-            ";": "reduce_30"
+            "endif": "reduce_30",
+            "(": "reduce_30",
+            "ID": "reduce_30",
+            ";": "reduce_30",
+            "while": "reduce_30",
+            "output": "reduce_30",
+            "case": "reduce_30",
+            "default": "reduce_30",
+            "return": "reduce_30",
+            "NUM": "reduce_30"
         },
         "44": {
             "(": "shift_44",
-            "expression": "goto_68",
-            "var": "goto_59",
-            "simple_expression": "goto_60",
-            "additive_expression": "goto_61",
-            "term": "goto_62",
-            "factor": "goto_63",
-            "call": "goto_64",
-            "PID": "goto_65",
-            "PNUM": "goto_66",
-            "NUM": "reduce_69",
-            "ID": "reduce_67"
+            "output": "shift_51",
+            "expression": "goto_70",
+            "var": "goto_60",
+            "simple_expression": "goto_61",
+            "additive_expression": "goto_62",
+            "term": "goto_63",
+            "factor": "goto_64",
+            "call": "goto_65",
+            "PID": "goto_66",
+            "PNUM": "goto_67",
+            "call_output": "goto_68",
+            "NUM": "reduce_70",
+            "ID": "reduce_68"
         },
         "45": {
-            "if": "reduce_17",
-            "return": "reduce_17",
             "else": "reduce_17",
-            "int": "reduce_17",
-            "}": "reduce_17",
-            "$": "reduce_17",
-            "switch": "reduce_17",
-            "endif": "reduce_17",
-            "void": "reduce_17",
-            "case": "reduce_17",
-            "ID": "reduce_17",
-            "NUM": "reduce_17",
-            "default": "reduce_17",
+            "if": "reduce_17",
             "break": "reduce_17",
-            "while": "reduce_17",
-            "(": "reduce_17",
+            "void": "reduce_17",
+            "}": "reduce_17",
+            "switch": "reduce_17",
             "{": "reduce_17",
-            ";": "reduce_17"
+            "endif": "reduce_17",
+            "(": "reduce_17",
+            "ID": "reduce_17",
+            ";": "reduce_17",
+            "while": "reduce_17",
+            "$": "reduce_17",
+            "int": "reduce_17",
+            "output": "reduce_17",
+            "case": "reduce_17",
+            "default": "reduce_17",
+            "return": "reduce_17",
+            "NUM": "reduce_17"
         },
         "46": {
-            "BREAK_JP": "goto_69",
-            ";": "reduce_71"
+            "BREAK_JP": "goto_71",
+            ";": "reduce_72"
         },
         "47": {
-            "(": "shift_70"
+            "(": "shift_72"
         },
         "48": {
-            "LABEL_WHILE": "goto_71",
-            "(": "reduce_77"
-        },
-        "49": {
-            ";": "shift_72",
-            "(": "shift_44",
-            "expression": "goto_73",
-            "var": "goto_59",
-            "simple_expression": "goto_60",
-            "additive_expression": "goto_61",
-            "term": "goto_62",
-            "factor": "goto_63",
-            "call": "goto_64",
-            "PID": "goto_65",
-            "PNUM": "goto_66",
-            "NUM": "reduce_69",
-            "ID": "reduce_67"
-        },
-        "50": {
-            "LABEL_SWITCH": "goto_74",
+            "LABEL_WHILE": "goto_73",
             "(": "reduce_78"
         },
+        "49": {
+            ";": "shift_74",
+            "(": "shift_44",
+            "output": "shift_51",
+            "expression": "goto_75",
+            "var": "goto_60",
+            "simple_expression": "goto_61",
+            "additive_expression": "goto_62",
+            "term": "goto_63",
+            "factor": "goto_64",
+            "call": "goto_65",
+            "PID": "goto_66",
+            "PNUM": "goto_67",
+            "call_output": "goto_68",
+            "NUM": "reduce_70",
+            "ID": "reduce_68"
+        },
+        "50": {
+            "LABEL_SWITCH": "goto_76",
+            "(": "reduce_79"
+        },
         "51": {
-            "if": "reduce_23",
-            "return": "reduce_23",
-            "else": "reduce_23",
-            "}": "reduce_23",
-            "switch": "reduce_23",
-            "endif": "reduce_23",
-            "case": "reduce_23",
-            "ID": "reduce_23",
-            "NUM": "reduce_23",
-            "default": "reduce_23",
-            "break": "reduce_23",
-            "while": "reduce_23",
-            "(": "reduce_23",
-            "{": "reduce_23",
-            ";": "reduce_23"
+            "(": "shift_77"
         },
         "52": {
-            "if": "reduce_20",
-            "return": "reduce_20",
-            "}": "reduce_20",
-            "switch": "reduce_20",
-            "case": "reduce_20",
-            "ID": "reduce_20",
-            "NUM": "reduce_20",
-            "default": "reduce_20",
-            "break": "reduce_20",
-            "while": "reduce_20",
-            ";": "reduce_20",
-            "{": "reduce_20",
-            "(": "reduce_20"
+            "else": "reduce_23",
+            "if": "reduce_23",
+            "break": "reduce_23",
+            "}": "reduce_23",
+            "switch": "reduce_23",
+            "{": "reduce_23",
+            "endif": "reduce_23",
+            "(": "reduce_23",
+            "ID": "reduce_23",
+            ";": "reduce_23",
+            "while": "reduce_23",
+            "output": "reduce_23",
+            "case": "reduce_23",
+            "default": "reduce_23",
+            "return": "reduce_23",
+            "NUM": "reduce_23"
         },
         "53": {
-            "if": "reduce_22",
-            "return": "reduce_22",
-            "else": "reduce_22",
-            "}": "reduce_22",
-            "switch": "reduce_22",
-            "endif": "reduce_22",
-            "case": "reduce_22",
-            "ID": "reduce_22",
-            "NUM": "reduce_22",
-            "default": "reduce_22",
-            "break": "reduce_22",
-            "while": "reduce_22",
-            "(": "reduce_22",
-            "{": "reduce_22",
-            ";": "reduce_22"
+            "if": "reduce_20",
+            "break": "reduce_20",
+            "}": "reduce_20",
+            "switch": "reduce_20",
+            "{": "reduce_20",
+            "(": "reduce_20",
+            "ID": "reduce_20",
+            ";": "reduce_20",
+            "while": "reduce_20",
+            "output": "reduce_20",
+            "case": "reduce_20",
+            "default": "reduce_20",
+            "return": "reduce_20",
+            "NUM": "reduce_20"
         },
         "54": {
-            "if": "reduce_24",
-            "return": "reduce_24",
-            "else": "reduce_24",
-            "}": "reduce_24",
-            "switch": "reduce_24",
-            "endif": "reduce_24",
-            "case": "reduce_24",
-            "ID": "reduce_24",
-            "NUM": "reduce_24",
-            "default": "reduce_24",
-            "break": "reduce_24",
-            "while": "reduce_24",
-            "(": "reduce_24",
-            "{": "reduce_24",
-            ";": "reduce_24"
+            "else": "reduce_22",
+            "if": "reduce_22",
+            "break": "reduce_22",
+            "}": "reduce_22",
+            "switch": "reduce_22",
+            "{": "reduce_22",
+            "endif": "reduce_22",
+            "(": "reduce_22",
+            "ID": "reduce_22",
+            ";": "reduce_22",
+            "while": "reduce_22",
+            "output": "reduce_22",
+            "case": "reduce_22",
+            "default": "reduce_22",
+            "return": "reduce_22",
+            "NUM": "reduce_22"
         },
         "55": {
-            "if": "reduce_25",
-            "return": "reduce_25",
-            "else": "reduce_25",
-            "}": "reduce_25",
-            "switch": "reduce_25",
-            "endif": "reduce_25",
-            "case": "reduce_25",
-            "ID": "reduce_25",
-            "NUM": "reduce_25",
-            "default": "reduce_25",
-            "break": "reduce_25",
-            "while": "reduce_25",
-            "(": "reduce_25",
-            "{": "reduce_25",
-            ";": "reduce_25"
+            "else": "reduce_24",
+            "if": "reduce_24",
+            "break": "reduce_24",
+            "}": "reduce_24",
+            "switch": "reduce_24",
+            "{": "reduce_24",
+            "endif": "reduce_24",
+            "(": "reduce_24",
+            "ID": "reduce_24",
+            ";": "reduce_24",
+            "while": "reduce_24",
+            "output": "reduce_24",
+            "case": "reduce_24",
+            "default": "reduce_24",
+            "return": "reduce_24",
+            "NUM": "reduce_24"
         },
         "56": {
-            "if": "reduce_26",
-            "return": "reduce_26",
-            "else": "reduce_26",
-            "}": "reduce_26",
-            "switch": "reduce_26",
-            "endif": "reduce_26",
-            "case": "reduce_26",
-            "ID": "reduce_26",
-            "NUM": "reduce_26",
-            "default": "reduce_26",
-            "break": "reduce_26",
-            "while": "reduce_26",
-            "(": "reduce_26",
-            "{": "reduce_26",
-            ";": "reduce_26"
+            "else": "reduce_25",
+            "if": "reduce_25",
+            "break": "reduce_25",
+            "}": "reduce_25",
+            "switch": "reduce_25",
+            "{": "reduce_25",
+            "endif": "reduce_25",
+            "(": "reduce_25",
+            "ID": "reduce_25",
+            ";": "reduce_25",
+            "while": "reduce_25",
+            "output": "reduce_25",
+            "case": "reduce_25",
+            "default": "reduce_25",
+            "return": "reduce_25",
+            "NUM": "reduce_25"
         },
         "57": {
-            "if": "reduce_27",
-            "return": "reduce_27",
-            "else": "reduce_27",
-            "}": "reduce_27",
-            "switch": "reduce_27",
-            "endif": "reduce_27",
-            "case": "reduce_27",
-            "ID": "reduce_27",
-            "NUM": "reduce_27",
-            "default": "reduce_27",
-            "break": "reduce_27",
-            "while": "reduce_27",
-            "(": "reduce_27",
-            "{": "reduce_27",
-            ";": "reduce_27"
+            "else": "reduce_26",
+            "if": "reduce_26",
+            "break": "reduce_26",
+            "}": "reduce_26",
+            "switch": "reduce_26",
+            "{": "reduce_26",
+            "endif": "reduce_26",
+            "(": "reduce_26",
+            "ID": "reduce_26",
+            ";": "reduce_26",
+            "while": "reduce_26",
+            "output": "reduce_26",
+            "case": "reduce_26",
+            "default": "reduce_26",
+            "return": "reduce_26",
+            "NUM": "reduce_26"
         },
         "58": {
-            ";": "shift_75"
+            "else": "reduce_27",
+            "if": "reduce_27",
+            "break": "reduce_27",
+            "}": "reduce_27",
+            "switch": "reduce_27",
+            "{": "reduce_27",
+            "endif": "reduce_27",
+            "(": "reduce_27",
+            "ID": "reduce_27",
+            ";": "reduce_27",
+            "while": "reduce_27",
+            "output": "reduce_27",
+            "case": "reduce_27",
+            "default": "reduce_27",
+            "return": "reduce_27",
+            "NUM": "reduce_27"
         },
         "59": {
-            "=": "shift_76",
-            "-": "reduce_59",
-            "/": "reduce_59",
-            "*": "reduce_59",
-            ",": "reduce_59",
-            "==": "reduce_59",
-            ")": "reduce_59",
-            "<": "reduce_59",
-            "]": "reduce_59",
-            ";": "reduce_59",
-            "+": "reduce_59"
+            ";": "shift_78"
         },
         "60": {
-            ")": "reduce_43",
-            "]": "reduce_43",
-            ",": "reduce_43",
-            ";": "reduce_43"
+            "=": "shift_79",
+            ")": "reduce_59",
+            ";": "reduce_59",
+            "/": "reduce_59",
+            "==": "reduce_59",
+            "<": "reduce_59",
+            ",": "reduce_59",
+            "*": "reduce_59",
+            "+": "reduce_59",
+            "-": "reduce_59",
+            "]": "reduce_59"
         },
         "61": {
-            "relop": "goto_77",
-            "addop": "goto_78",
-            "P_OP": "goto_79",
-            "<": "reduce_70",
-            "-": "reduce_70",
-            "/": "reduce_70",
-            "*": "reduce_70",
-            "==": "reduce_70",
-            "+": "reduce_70",
-            ")": "reduce_47",
-            "]": "reduce_47",
-            ",": "reduce_47",
-            ";": "reduce_47"
+            ")": "reduce_43",
+            ";": "reduce_43",
+            ",": "reduce_43",
+            "]": "reduce_43"
         },
         "62": {
-            "mulop": "goto_80",
-            "P_OP": "goto_81",
-            "<": "reduce_51",
-            "-": "reduce_51",
-            "/": "reduce_70",
-            "*": "reduce_70",
-            "==": "reduce_51",
-            "+": "reduce_51",
-            ",": "reduce_51",
-            ")": "reduce_51",
-            "]": "reduce_51",
-            ";": "reduce_51"
+            "relop": "goto_80",
+            "addop": "goto_81",
+            "P_OP": "goto_82",
+            "*": "reduce_71",
+            "+": "reduce_71",
+            "/": "reduce_71",
+            "-": "reduce_71",
+            "==": "reduce_71",
+            "<": "reduce_71",
+            ")": "reduce_47",
+            ";": "reduce_47",
+            ",": "reduce_47",
+            "]": "reduce_47"
         },
         "63": {
-            "-": "reduce_55",
-            "/": "reduce_55",
-            "*": "reduce_55",
-            ",": "reduce_55",
-            "==": "reduce_55",
-            ")": "reduce_55",
-            "<": "reduce_55",
-            "]": "reduce_55",
-            ";": "reduce_55",
-            "+": "reduce_55"
+            "mulop": "goto_83",
+            "P_OP": "goto_84",
+            "*": "reduce_71",
+            "+": "reduce_51",
+            "/": "reduce_71",
+            "-": "reduce_51",
+            "==": "reduce_51",
+            "<": "reduce_51",
+            ")": "reduce_51",
+            ";": "reduce_51",
+            ",": "reduce_51",
+            "]": "reduce_51"
         },
         "64": {
-            "-": "reduce_60",
-            "/": "reduce_60",
-            "*": "reduce_60",
-            ",": "reduce_60",
-            "==": "reduce_60",
-            ")": "reduce_60",
-            "<": "reduce_60",
-            "]": "reduce_60",
-            ";": "reduce_60",
-            "+": "reduce_60"
+            ")": "reduce_55",
+            ";": "reduce_55",
+            "/": "reduce_55",
+            "==": "reduce_55",
+            "<": "reduce_55",
+            ",": "reduce_55",
+            "*": "reduce_55",
+            "+": "reduce_55",
+            "-": "reduce_55",
+            "]": "reduce_55"
         },
         "65": {
-            "ID": "shift_82"
+            ")": "reduce_60",
+            ";": "reduce_60",
+            "/": "reduce_60",
+            "==": "reduce_60",
+            "<": "reduce_60",
+            ",": "reduce_60",
+            "*": "reduce_60",
+            "+": "reduce_60",
+            "-": "reduce_60",
+            "]": "reduce_60"
         },
         "66": {
-            "NUM": "shift_83"
+            "ID": "shift_85"
         },
         "67": {
-            "[": "shift_14",
-            "VAR_DEC": "goto_16",
-            ";": "reduce_75"
+            "NUM": "shift_86"
         },
         "68": {
-            ")": "shift_84"
+            ")": "reduce_62",
+            ";": "reduce_62",
+            "/": "reduce_62",
+            "==": "reduce_62",
+            "<": "reduce_62",
+            ",": "reduce_62",
+            "*": "reduce_62",
+            "+": "reduce_62",
+            "-": "reduce_62",
+            "]": "reduce_62"
         },
         "69": {
-            ";": "shift_85"
+            "[": "shift_14",
+            "VAR_DEC": "goto_16",
+            ";": "reduce_76"
         },
         "70": {
-            "(": "shift_44",
-            "expression": "goto_86",
-            "var": "goto_59",
-            "simple_expression": "goto_60",
-            "additive_expression": "goto_61",
-            "term": "goto_62",
-            "factor": "goto_63",
-            "call": "goto_64",
-            "PID": "goto_65",
-            "PNUM": "goto_66",
-            "NUM": "reduce_69",
-            "ID": "reduce_67"
+            ")": "shift_87"
         },
         "71": {
-            "(": "shift_87"
-        },
-        "72": {
-            "if": "reduce_34",
-            "return": "reduce_34",
-            "else": "reduce_34",
-            "}": "reduce_34",
-            "switch": "reduce_34",
-            "endif": "reduce_34",
-            "case": "reduce_34",
-            "ID": "reduce_34",
-            "NUM": "reduce_34",
-            "default": "reduce_34",
-            "break": "reduce_34",
-            "while": "reduce_34",
-            "(": "reduce_34",
-            "{": "reduce_34",
-            ";": "reduce_34"
-        },
-        "73": {
             ";": "shift_88"
         },
+        "72": {
+            "(": "shift_44",
+            "output": "shift_51",
+            "expression": "goto_89",
+            "var": "goto_60",
+            "simple_expression": "goto_61",
+            "additive_expression": "goto_62",
+            "term": "goto_63",
+            "factor": "goto_64",
+            "call": "goto_65",
+            "PID": "goto_66",
+            "PNUM": "goto_67",
+            "call_output": "goto_68",
+            "NUM": "reduce_70",
+            "ID": "reduce_68"
+        },
+        "73": {
+            "(": "shift_90"
+        },
         "74": {
-            "(": "shift_89"
+            "else": "reduce_34",
+            "if": "reduce_34",
+            "break": "reduce_34",
+            "}": "reduce_34",
+            "switch": "reduce_34",
+            "{": "reduce_34",
+            "endif": "reduce_34",
+            "(": "reduce_34",
+            "ID": "reduce_34",
+            ";": "reduce_34",
+            "while": "reduce_34",
+            "output": "reduce_34",
+            "case": "reduce_34",
+            "default": "reduce_34",
+            "return": "reduce_34",
+            "NUM": "reduce_34"
         },
         "75": {
-            "if": "reduce_28",
-            "return": "reduce_28",
-            "else": "reduce_28",
-            "}": "reduce_28",
-            "switch": "reduce_28",
-            "endif": "reduce_28",
-            "case": "reduce_28",
-            "ID": "reduce_28",
-            "NUM": "reduce_28",
-            "default": "reduce_28",
-            "break": "reduce_28",
-            "while": "reduce_28",
-            "(": "reduce_28",
-            "{": "reduce_28",
-            ";": "reduce_28"
+            ";": "shift_91"
         },
         "76": {
-            "(": "shift_44",
-            "expression": "goto_90",
-            "var": "goto_59",
-            "simple_expression": "goto_60",
-            "additive_expression": "goto_61",
-            "term": "goto_62",
-            "factor": "goto_63",
-            "call": "goto_64",
-            "PID": "goto_65",
-            "PNUM": "goto_66",
-            "NUM": "reduce_69",
-            "ID": "reduce_67"
+            "(": "shift_92"
         },
         "77": {
             "(": "shift_44",
-            "var": "goto_91",
-            "additive_expression": "goto_92",
-            "term": "goto_62",
-            "factor": "goto_63",
-            "call": "goto_64",
-            "PID": "goto_65",
-            "PNUM": "goto_66",
-            "NUM": "reduce_69",
-            "ID": "reduce_67"
+            "output": "shift_51",
+            "expression": "goto_93",
+            "var": "goto_60",
+            "simple_expression": "goto_61",
+            "additive_expression": "goto_62",
+            "term": "goto_63",
+            "factor": "goto_64",
+            "call": "goto_65",
+            "args": "goto_94",
+            "arg_list": "goto_95",
+            "PID": "goto_66",
+            "PNUM": "goto_67",
+            "call_output": "goto_68",
+            "NUM": "reduce_70",
+            "ID": "reduce_68",
+            ")": "reduce_65"
         },
         "78": {
-            "(": "shift_44",
-            "var": "goto_91",
-            "term": "goto_93",
-            "factor": "goto_63",
-            "call": "goto_64",
-            "PID": "goto_65",
-            "PNUM": "goto_66",
-            "NUM": "reduce_69",
-            "ID": "reduce_67"
+            "else": "reduce_28",
+            "if": "reduce_28",
+            "break": "reduce_28",
+            "}": "reduce_28",
+            "switch": "reduce_28",
+            "{": "reduce_28",
+            "endif": "reduce_28",
+            "(": "reduce_28",
+            "ID": "reduce_28",
+            ";": "reduce_28",
+            "while": "reduce_28",
+            "output": "reduce_28",
+            "case": "reduce_28",
+            "default": "reduce_28",
+            "return": "reduce_28",
+            "NUM": "reduce_28"
         },
         "79": {
-            "<": "shift_94",
-            "==": "shift_95",
-            "+": "shift_96",
-            "-": "shift_97"
+            "(": "shift_44",
+            "output": "shift_51",
+            "expression": "goto_96",
+            "var": "goto_60",
+            "simple_expression": "goto_61",
+            "additive_expression": "goto_62",
+            "term": "goto_63",
+            "factor": "goto_64",
+            "call": "goto_65",
+            "PID": "goto_66",
+            "PNUM": "goto_67",
+            "call_output": "goto_68",
+            "NUM": "reduce_70",
+            "ID": "reduce_68"
         },
         "80": {
             "(": "shift_44",
-            "var": "goto_91",
-            "factor": "goto_98",
-            "call": "goto_64",
-            "PID": "goto_65",
-            "PNUM": "goto_66",
-            "NUM": "reduce_69",
-            "ID": "reduce_67"
+            "output": "shift_51",
+            "var": "goto_97",
+            "additive_expression": "goto_98",
+            "term": "goto_63",
+            "factor": "goto_64",
+            "call": "goto_65",
+            "PID": "goto_66",
+            "PNUM": "goto_67",
+            "call_output": "goto_68",
+            "NUM": "reduce_70",
+            "ID": "reduce_68"
         },
         "81": {
-            "*": "shift_99",
-            "/": "shift_100"
+            "(": "shift_44",
+            "output": "shift_51",
+            "var": "goto_97",
+            "term": "goto_99",
+            "factor": "goto_64",
+            "call": "goto_65",
+            "PID": "goto_66",
+            "PNUM": "goto_67",
+            "call_output": "goto_68",
+            "NUM": "reduce_70",
+            "ID": "reduce_68"
         },
         "82": {
-            "[": "shift_101",
-            "(": "shift_102",
-            "-": "reduce_44",
-            "*": "reduce_44",
-            ",": "reduce_44",
-            "+": "reduce_44",
-            "/": "reduce_44",
-            "==": "reduce_44",
-            "=": "reduce_44",
-            ")": "reduce_44",
-            "<": "reduce_44",
-            "]": "reduce_44",
-            ";": "reduce_44"
+            "<": "shift_100",
+            "==": "shift_101",
+            "+": "shift_102",
+            "-": "shift_103"
         },
         "83": {
-            "-": "reduce_61",
-            "/": "reduce_61",
-            "*": "reduce_61",
-            ",": "reduce_61",
-            "==": "reduce_61",
-            ")": "reduce_61",
-            "<": "reduce_61",
-            "]": "reduce_61",
-            ";": "reduce_61",
-            "+": "reduce_61"
+            "(": "shift_44",
+            "output": "shift_51",
+            "var": "goto_97",
+            "factor": "goto_104",
+            "call": "goto_65",
+            "PID": "goto_66",
+            "PNUM": "goto_67",
+            "call_output": "goto_68",
+            "NUM": "reduce_70",
+            "ID": "reduce_68"
         },
         "84": {
-            "-": "reduce_58",
-            "/": "reduce_58",
-            "*": "reduce_58",
-            ",": "reduce_58",
-            "==": "reduce_58",
-            ")": "reduce_58",
-            "<": "reduce_58",
-            "]": "reduce_58",
-            ";": "reduce_58",
-            "+": "reduce_58"
+            "*": "shift_105",
+            "/": "shift_106"
         },
         "85": {
-            "if": "reduce_29",
-            "return": "reduce_29",
-            "else": "reduce_29",
-            "}": "reduce_29",
-            "switch": "reduce_29",
-            "endif": "reduce_29",
-            "case": "reduce_29",
-            "ID": "reduce_29",
-            "NUM": "reduce_29",
-            "default": "reduce_29",
-            "break": "reduce_29",
-            "while": "reduce_29",
-            "(": "reduce_29",
-            "{": "reduce_29",
-            ";": "reduce_29"
+            "[": "shift_107",
+            "(": "shift_108",
+            ")": "reduce_44",
+            "==": "reduce_44",
+            "+": "reduce_44",
+            "-": "reduce_44",
+            "]": "reduce_44",
+            ";": "reduce_44",
+            "<": "reduce_44",
+            ",": "reduce_44",
+            "=": "reduce_44",
+            "*": "reduce_44",
+            "/": "reduce_44"
         },
         "86": {
-            ")": "shift_103"
+            ")": "reduce_61",
+            ";": "reduce_61",
+            "/": "reduce_61",
+            "==": "reduce_61",
+            "<": "reduce_61",
+            ",": "reduce_61",
+            "*": "reduce_61",
+            "+": "reduce_61",
+            "-": "reduce_61",
+            "]": "reduce_61"
         },
         "87": {
-            "(": "shift_44",
-            "expression": "goto_104",
-            "var": "goto_59",
-            "simple_expression": "goto_60",
-            "additive_expression": "goto_61",
-            "term": "goto_62",
-            "factor": "goto_63",
-            "call": "goto_64",
-            "PID": "goto_65",
-            "PNUM": "goto_66",
-            "NUM": "reduce_69",
-            "ID": "reduce_67"
+            ")": "reduce_58",
+            ";": "reduce_58",
+            "/": "reduce_58",
+            "==": "reduce_58",
+            "<": "reduce_58",
+            ",": "reduce_58",
+            "*": "reduce_58",
+            "+": "reduce_58",
+            "-": "reduce_58",
+            "]": "reduce_58"
         },
         "88": {
-            "if": "reduce_35",
-            "return": "reduce_35",
-            "else": "reduce_35",
-            "}": "reduce_35",
-            "switch": "reduce_35",
-            "endif": "reduce_35",
-            "case": "reduce_35",
-            "ID": "reduce_35",
-            "NUM": "reduce_35",
-            "default": "reduce_35",
-            "break": "reduce_35",
-            "while": "reduce_35",
-            "(": "reduce_35",
-            "{": "reduce_35",
-            ";": "reduce_35"
+            "else": "reduce_29",
+            "if": "reduce_29",
+            "break": "reduce_29",
+            "}": "reduce_29",
+            "switch": "reduce_29",
+            "{": "reduce_29",
+            "endif": "reduce_29",
+            "(": "reduce_29",
+            "ID": "reduce_29",
+            ";": "reduce_29",
+            "while": "reduce_29",
+            "output": "reduce_29",
+            "case": "reduce_29",
+            "default": "reduce_29",
+            "return": "reduce_29",
+            "NUM": "reduce_29"
         },
         "89": {
-            "(": "shift_44",
-            "expression": "goto_105",
-            "var": "goto_59",
-            "simple_expression": "goto_60",
-            "additive_expression": "goto_61",
-            "term": "goto_62",
-            "factor": "goto_63",
-            "call": "goto_64",
-            "PID": "goto_65",
-            "PNUM": "goto_66",
-            "NUM": "reduce_69",
-            "ID": "reduce_67"
+            ")": "shift_109"
         },
         "90": {
-            ")": "reduce_42",
-            "]": "reduce_42",
-            ",": "reduce_42",
-            ";": "reduce_42"
+            "(": "shift_44",
+            "output": "shift_51",
+            "expression": "goto_110",
+            "var": "goto_60",
+            "simple_expression": "goto_61",
+            "additive_expression": "goto_62",
+            "term": "goto_63",
+            "factor": "goto_64",
+            "call": "goto_65",
+            "PID": "goto_66",
+            "PNUM": "goto_67",
+            "call_output": "goto_68",
+            "NUM": "reduce_70",
+            "ID": "reduce_68"
         },
         "91": {
-            "-": "reduce_59",
-            "/": "reduce_59",
-            "*": "reduce_59",
-            ",": "reduce_59",
-            "==": "reduce_59",
-            ")": "reduce_59",
-            "<": "reduce_59",
-            "]": "reduce_59",
-            ";": "reduce_59",
-            "+": "reduce_59"
+            "else": "reduce_35",
+            "if": "reduce_35",
+            "break": "reduce_35",
+            "}": "reduce_35",
+            "switch": "reduce_35",
+            "{": "reduce_35",
+            "endif": "reduce_35",
+            "(": "reduce_35",
+            "ID": "reduce_35",
+            ";": "reduce_35",
+            "while": "reduce_35",
+            "output": "reduce_35",
+            "case": "reduce_35",
+            "default": "reduce_35",
+            "return": "reduce_35",
+            "NUM": "reduce_35"
         },
         "92": {
-            "addop": "goto_78",
-            "P_OP": "goto_106",
-            "<": "reduce_70",
-            "-": "reduce_70",
-            "/": "reduce_70",
-            "*": "reduce_70",
-            "==": "reduce_70",
-            "+": "reduce_70",
-            ")": "reduce_46",
-            "]": "reduce_46",
-            ",": "reduce_46",
-            ";": "reduce_46"
+            "(": "shift_44",
+            "output": "shift_51",
+            "expression": "goto_111",
+            "var": "goto_60",
+            "simple_expression": "goto_61",
+            "additive_expression": "goto_62",
+            "term": "goto_63",
+            "factor": "goto_64",
+            "call": "goto_65",
+            "PID": "goto_66",
+            "PNUM": "goto_67",
+            "call_output": "goto_68",
+            "NUM": "reduce_70",
+            "ID": "reduce_68"
         },
         "93": {
-            "mulop": "goto_80",
-            "P_OP": "goto_81",
-            "<": "reduce_50",
-            "-": "reduce_50",
-            "/": "reduce_70",
-            "*": "reduce_70",
-            "==": "reduce_50",
-            "+": "reduce_50",
-            ",": "reduce_50",
-            ")": "reduce_50",
-            "]": "reduce_50",
-            ";": "reduce_50"
+            ")": "reduce_67",
+            ",": "reduce_67"
         },
         "94": {
-            "(": "reduce_48",
-            "NUM": "reduce_48",
-            "ID": "reduce_48"
-        },
-        "95": {
-            "(": "reduce_49",
-            "NUM": "reduce_49",
-            "ID": "reduce_49"
-        },
-        "96": {
-            "(": "reduce_52",
-            "NUM": "reduce_52",
-            "ID": "reduce_52"
-        },
-        "97": {
-            "(": "reduce_53",
-            "NUM": "reduce_53",
-            "ID": "reduce_53"
-        },
-        "98": {
-            "-": "reduce_54",
-            "/": "reduce_54",
-            "*": "reduce_54",
-            ",": "reduce_54",
-            "==": "reduce_54",
-            ")": "reduce_54",
-            "<": "reduce_54",
-            "]": "reduce_54",
-            ";": "reduce_54",
-            "+": "reduce_54"
-        },
-        "99": {
-            "(": "reduce_56",
-            "NUM": "reduce_56",
-            "ID": "reduce_56"
-        },
-        "100": {
-            "(": "reduce_57",
-            "NUM": "reduce_57",
-            "ID": "reduce_57"
-        },
-        "101": {
-            "(": "shift_44",
-            "expression": "goto_107",
-            "var": "goto_59",
-            "simple_expression": "goto_60",
-            "additive_expression": "goto_61",
-            "term": "goto_62",
-            "factor": "goto_63",
-            "call": "goto_64",
-            "PID": "goto_65",
-            "PNUM": "goto_66",
-            "NUM": "reduce_69",
-            "ID": "reduce_67"
-        },
-        "102": {
-            "(": "shift_44",
-            "expression": "goto_108",
-            "var": "goto_59",
-            "simple_expression": "goto_60",
-            "additive_expression": "goto_61",
-            "term": "goto_62",
-            "factor": "goto_63",
-            "call": "goto_64",
-            "args": "goto_109",
-            "arg_list": "goto_110",
-            "PID": "goto_65",
-            "PNUM": "goto_66",
-            "NUM": "reduce_69",
-            "ID": "reduce_67",
-            ")": "reduce_64"
-        },
-        "103": {
-            "SAVE": "goto_111",
-            "if": "reduce_72",
-            "return": "reduce_72",
-            "switch": "reduce_72",
-            "NUM": "reduce_72",
-            "ID": "reduce_72",
-            ":": "reduce_72",
-            "break": "reduce_72",
-            "while": "reduce_72",
-            ";": "reduce_72",
-            "{": "reduce_72",
-            "(": "reduce_72"
-        },
-        "104": {
             ")": "shift_112"
         },
+        "95": {
+            ",": "shift_113",
+            ")": "reduce_64"
+        },
+        "96": {
+            ")": "reduce_42",
+            ";": "reduce_42",
+            ",": "reduce_42",
+            "]": "reduce_42"
+        },
+        "97": {
+            ")": "reduce_59",
+            ";": "reduce_59",
+            "/": "reduce_59",
+            "==": "reduce_59",
+            "<": "reduce_59",
+            ",": "reduce_59",
+            "*": "reduce_59",
+            "+": "reduce_59",
+            "-": "reduce_59",
+            "]": "reduce_59"
+        },
+        "98": {
+            "addop": "goto_81",
+            "P_OP": "goto_114",
+            "*": "reduce_71",
+            "+": "reduce_71",
+            "/": "reduce_71",
+            "-": "reduce_71",
+            "==": "reduce_71",
+            "<": "reduce_71",
+            ")": "reduce_46",
+            ";": "reduce_46",
+            ",": "reduce_46",
+            "]": "reduce_46"
+        },
+        "99": {
+            "mulop": "goto_83",
+            "P_OP": "goto_84",
+            "*": "reduce_71",
+            "+": "reduce_50",
+            "/": "reduce_71",
+            "-": "reduce_50",
+            "==": "reduce_50",
+            "<": "reduce_50",
+            ")": "reduce_50",
+            ";": "reduce_50",
+            ",": "reduce_50",
+            "]": "reduce_50"
+        },
+        "100": {
+            "output": "reduce_48",
+            "(": "reduce_48",
+            "ID": "reduce_48",
+            "NUM": "reduce_48"
+        },
+        "101": {
+            "output": "reduce_49",
+            "(": "reduce_49",
+            "ID": "reduce_49",
+            "NUM": "reduce_49"
+        },
+        "102": {
+            "output": "reduce_52",
+            "(": "reduce_52",
+            "ID": "reduce_52",
+            "NUM": "reduce_52"
+        },
+        "103": {
+            "output": "reduce_53",
+            "(": "reduce_53",
+            "ID": "reduce_53",
+            "NUM": "reduce_53"
+        },
+        "104": {
+            ")": "reduce_54",
+            ";": "reduce_54",
+            "/": "reduce_54",
+            "==": "reduce_54",
+            "<": "reduce_54",
+            ",": "reduce_54",
+            "*": "reduce_54",
+            "+": "reduce_54",
+            "-": "reduce_54",
+            "]": "reduce_54"
+        },
         "105": {
-            ")": "shift_113"
+            "output": "reduce_56",
+            "(": "reduce_56",
+            "ID": "reduce_56",
+            "NUM": "reduce_56"
         },
         "106": {
-            "+": "shift_96",
-            "-": "shift_97"
+            "output": "reduce_57",
+            "(": "reduce_57",
+            "ID": "reduce_57",
+            "NUM": "reduce_57"
         },
         "107": {
-            "]": "shift_114"
+            "(": "shift_44",
+            "output": "shift_51",
+            "expression": "goto_115",
+            "var": "goto_60",
+            "simple_expression": "goto_61",
+            "additive_expression": "goto_62",
+            "term": "goto_63",
+            "factor": "goto_64",
+            "call": "goto_65",
+            "PID": "goto_66",
+            "PNUM": "goto_67",
+            "call_output": "goto_68",
+            "NUM": "reduce_70",
+            "ID": "reduce_68"
         },
         "108": {
+            "(": "shift_44",
+            "output": "shift_51",
+            "expression": "goto_93",
+            "var": "goto_60",
+            "simple_expression": "goto_61",
+            "additive_expression": "goto_62",
+            "term": "goto_63",
+            "factor": "goto_64",
+            "call": "goto_65",
+            "args": "goto_116",
+            "arg_list": "goto_95",
+            "PID": "goto_66",
+            "PNUM": "goto_67",
+            "call_output": "goto_68",
+            "NUM": "reduce_70",
+            "ID": "reduce_68",
+            ")": "reduce_65"
+        },
+        "109": {
+            "SAVE": "goto_117",
+            "if": "reduce_73",
+            "break": "reduce_73",
+            ":": "reduce_73",
+            "{": "reduce_73",
+            "switch": "reduce_73",
+            "(": "reduce_73",
+            "ID": "reduce_73",
+            ";": "reduce_73",
+            "while": "reduce_73",
+            "output": "reduce_73",
+            "return": "reduce_73",
+            "NUM": "reduce_73"
+        },
+        "110": {
+            ")": "shift_118"
+        },
+        "111": {
+            ")": "shift_119"
+        },
+        "112": {
+            ")": "reduce_80",
+            ";": "reduce_80",
+            "==": "reduce_80",
+            "<": "reduce_80",
+            ",": "reduce_80",
+            "-": "reduce_80",
+            "*": "reduce_80",
+            "+": "reduce_80",
+            "/": "reduce_80",
+            "]": "reduce_80"
+        },
+        "113": {
+            "(": "shift_44",
+            "output": "shift_51",
+            "expression": "goto_120",
+            "var": "goto_60",
+            "simple_expression": "goto_61",
+            "additive_expression": "goto_62",
+            "term": "goto_63",
+            "factor": "goto_64",
+            "call": "goto_65",
+            "PID": "goto_66",
+            "PNUM": "goto_67",
+            "call_output": "goto_68",
+            "NUM": "reduce_70",
+            "ID": "reduce_68"
+        },
+        "114": {
+            "+": "shift_102",
+            "-": "shift_103"
+        },
+        "115": {
+            "]": "shift_121"
+        },
+        "116": {
+            ")": "shift_122"
+        },
+        "117": {
+            ";": "shift_43",
+            "(": "shift_44",
+            "{": "shift_32",
+            "break": "shift_46",
+            "if": "shift_47",
+            "while": "shift_48",
+            "return": "shift_49",
+            "switch": "shift_50",
+            "output": "shift_51",
+            "compound_stmt": "goto_52",
+            "statement": "goto_123",
+            "expression_stmt": "goto_54",
+            "selection_stmt": "goto_55",
+            "iteration_stmt": "goto_56",
+            "return_stmt": "goto_57",
+            "switch_stmt": "goto_58",
+            "expression": "goto_59",
+            "var": "goto_60",
+            "simple_expression": "goto_61",
+            "additive_expression": "goto_62",
+            "term": "goto_63",
+            "factor": "goto_64",
+            "call": "goto_65",
+            "PID": "goto_66",
+            "PNUM": "goto_67",
+            "call_output": "goto_68",
+            "NUM": "reduce_70",
+            "ID": "reduce_68"
+        },
+        "118": {
+            "SAVE": "goto_124",
+            "if": "reduce_73",
+            "break": "reduce_73",
+            ":": "reduce_73",
+            "{": "reduce_73",
+            "switch": "reduce_73",
+            "(": "reduce_73",
+            "ID": "reduce_73",
+            ";": "reduce_73",
+            "while": "reduce_73",
+            "output": "reduce_73",
+            "return": "reduce_73",
+            "NUM": "reduce_73"
+        },
+        "119": {
+            "{": "shift_125"
+        },
+        "120": {
             ")": "reduce_66",
             ",": "reduce_66"
         },
-        "109": {
-            ")": "shift_115"
-        },
-        "110": {
-            ",": "shift_116",
-            ")": "reduce_63"
-        },
-        "111": {
-            ";": "shift_43",
-            "(": "shift_44",
-            "{": "shift_32",
-            "break": "shift_46",
-            "if": "shift_47",
-            "while": "shift_48",
-            "return": "shift_49",
-            "switch": "shift_50",
-            "compound_stmt": "goto_51",
-            "statement": "goto_117",
-            "expression_stmt": "goto_53",
-            "selection_stmt": "goto_54",
-            "iteration_stmt": "goto_55",
-            "return_stmt": "goto_56",
-            "switch_stmt": "goto_57",
-            "expression": "goto_58",
-            "var": "goto_59",
-            "simple_expression": "goto_60",
-            "additive_expression": "goto_61",
-            "term": "goto_62",
-            "factor": "goto_63",
-            "call": "goto_64",
-            "PID": "goto_65",
-            "PNUM": "goto_66",
-            "NUM": "reduce_69",
-            "ID": "reduce_67"
-        },
-        "112": {
-            "SAVE": "goto_118",
-            "if": "reduce_72",
-            "return": "reduce_72",
-            "switch": "reduce_72",
-            "NUM": "reduce_72",
-            "ID": "reduce_72",
-            ":": "reduce_72",
-            "break": "reduce_72",
-            "while": "reduce_72",
-            ";": "reduce_72",
-            "{": "reduce_72",
-            "(": "reduce_72"
-        },
-        "113": {
-            "{": "shift_119"
-        },
-        "114": {
-            "-": "reduce_45",
-            "*": "reduce_45",
-            ",": "reduce_45",
-            "+": "reduce_45",
-            "/": "reduce_45",
-            "==": "reduce_45",
-            "=": "reduce_45",
-            ")": "reduce_45",
-            "<": "reduce_45",
-            "]": "reduce_45",
-            ";": "reduce_45"
-        },
-        "115": {
-            "-": "reduce_62",
-            "/": "reduce_62",
-            "*": "reduce_62",
-            ",": "reduce_62",
-            "==": "reduce_62",
-            ")": "reduce_62",
-            "<": "reduce_62",
-            "]": "reduce_62",
-            ";": "reduce_62",
-            "+": "reduce_62"
-        },
-        "116": {
-            "(": "shift_44",
-            "expression": "goto_120",
-            "var": "goto_59",
-            "simple_expression": "goto_60",
-            "additive_expression": "goto_61",
-            "term": "goto_62",
-            "factor": "goto_63",
-            "call": "goto_64",
-            "PID": "goto_65",
-            "PNUM": "goto_66",
-            "NUM": "reduce_69",
-            "ID": "reduce_67"
-        },
-        "117": {
-            "endif": "shift_121",
-            "JPF_SAVE": "goto_122",
-            "else": "reduce_73"
-        },
-        "118": {
-            ";": "shift_43",
-            "(": "shift_44",
-            "{": "shift_32",
-            "break": "shift_46",
-            "if": "shift_47",
-            "while": "shift_48",
-            "return": "shift_49",
-            "switch": "shift_50",
-            "compound_stmt": "goto_51",
-            "statement": "goto_123",
-            "expression_stmt": "goto_53",
-            "selection_stmt": "goto_54",
-            "iteration_stmt": "goto_55",
-            "return_stmt": "goto_56",
-            "switch_stmt": "goto_57",
-            "expression": "goto_58",
-            "var": "goto_59",
-            "simple_expression": "goto_60",
-            "additive_expression": "goto_61",
-            "term": "goto_62",
-            "factor": "goto_63",
-            "call": "goto_64",
-            "PID": "goto_65",
-            "PNUM": "goto_66",
-            "NUM": "reduce_69",
-            "ID": "reduce_67"
-        },
-        "119": {
-            "case_stmts": "goto_124",
-            "default": "reduce_38",
-            "}": "reduce_38",
-            "case": "reduce_38"
-        },
-        "120": {
-            ")": "reduce_65",
-            ",": "reduce_65"
-        },
         "121": {
-            "if": "reduce_31",
-            "return": "reduce_31",
-            "else": "reduce_31",
-            "}": "reduce_31",
-            "switch": "reduce_31",
-            "endif": "reduce_31",
-            "case": "reduce_31",
-            "ID": "reduce_31",
-            "NUM": "reduce_31",
-            "default": "reduce_31",
-            "break": "reduce_31",
-            "while": "reduce_31",
-            "(": "reduce_31",
-            "{": "reduce_31",
-            ";": "reduce_31"
+            ")": "reduce_45",
+            "==": "reduce_45",
+            "+": "reduce_45",
+            "-": "reduce_45",
+            "]": "reduce_45",
+            ";": "reduce_45",
+            "<": "reduce_45",
+            ",": "reduce_45",
+            "=": "reduce_45",
+            "*": "reduce_45",
+            "/": "reduce_45"
         },
         "122": {
-            "else": "shift_125"
+            ")": "reduce_63",
+            ";": "reduce_63",
+            "==": "reduce_63",
+            "<": "reduce_63",
+            ",": "reduce_63",
+            "-": "reduce_63",
+            "*": "reduce_63",
+            "+": "reduce_63",
+            "/": "reduce_63",
+            "]": "reduce_63"
         },
         "123": {
-            "if": "reduce_33",
-            "return": "reduce_33",
-            "else": "reduce_33",
-            "}": "reduce_33",
-            "switch": "reduce_33",
-            "endif": "reduce_33",
-            "case": "reduce_33",
-            "ID": "reduce_33",
-            "NUM": "reduce_33",
-            "default": "reduce_33",
-            "break": "reduce_33",
-            "while": "reduce_33",
-            "(": "reduce_33",
-            "{": "reduce_33",
-            ";": "reduce_33"
+            "endif": "shift_126",
+            "JPF_SAVE": "goto_127",
+            "else": "reduce_74"
         },
         "124": {
-            "case": "shift_126",
-            "default": "shift_127",
-            "case_stmt": "goto_128",
-            "default_stmt": "goto_129",
-            "}": "reduce_41"
+            ";": "shift_43",
+            "(": "shift_44",
+            "{": "shift_32",
+            "break": "shift_46",
+            "if": "shift_47",
+            "while": "shift_48",
+            "return": "shift_49",
+            "switch": "shift_50",
+            "output": "shift_51",
+            "compound_stmt": "goto_52",
+            "statement": "goto_128",
+            "expression_stmt": "goto_54",
+            "selection_stmt": "goto_55",
+            "iteration_stmt": "goto_56",
+            "return_stmt": "goto_57",
+            "switch_stmt": "goto_58",
+            "expression": "goto_59",
+            "var": "goto_60",
+            "simple_expression": "goto_61",
+            "additive_expression": "goto_62",
+            "term": "goto_63",
+            "factor": "goto_64",
+            "call": "goto_65",
+            "PID": "goto_66",
+            "PNUM": "goto_67",
+            "call_output": "goto_68",
+            "NUM": "reduce_70",
+            "ID": "reduce_68"
         },
         "125": {
-            ";": "shift_43",
-            "(": "shift_44",
-            "{": "shift_32",
-            "break": "shift_46",
-            "if": "shift_47",
-            "while": "shift_48",
-            "return": "shift_49",
-            "switch": "shift_50",
-            "compound_stmt": "goto_51",
-            "statement": "goto_130",
-            "expression_stmt": "goto_53",
-            "selection_stmt": "goto_54",
-            "iteration_stmt": "goto_55",
-            "return_stmt": "goto_56",
-            "switch_stmt": "goto_57",
-            "expression": "goto_58",
-            "var": "goto_59",
-            "simple_expression": "goto_60",
-            "additive_expression": "goto_61",
-            "term": "goto_62",
-            "factor": "goto_63",
-            "call": "goto_64",
-            "PID": "goto_65",
-            "PNUM": "goto_66",
-            "NUM": "reduce_69",
-            "ID": "reduce_67"
+            "case_stmts": "goto_129",
+            "}": "reduce_38",
+            "case": "reduce_38",
+            "default": "reduce_38"
         },
         "126": {
-            "PNUM": "goto_131",
-            "NUM": "reduce_69"
+            "else": "reduce_31",
+            "if": "reduce_31",
+            "break": "reduce_31",
+            "}": "reduce_31",
+            "switch": "reduce_31",
+            "{": "reduce_31",
+            "endif": "reduce_31",
+            "(": "reduce_31",
+            "ID": "reduce_31",
+            ";": "reduce_31",
+            "while": "reduce_31",
+            "output": "reduce_31",
+            "case": "reduce_31",
+            "default": "reduce_31",
+            "return": "reduce_31",
+            "NUM": "reduce_31"
         },
         "127": {
-            ":": "shift_132"
+            "else": "shift_130"
         },
         "128": {
-            "default": "reduce_37",
-            "}": "reduce_37",
-            "case": "reduce_37"
+            "else": "reduce_33",
+            "if": "reduce_33",
+            "break": "reduce_33",
+            "}": "reduce_33",
+            "switch": "reduce_33",
+            "{": "reduce_33",
+            "endif": "reduce_33",
+            "(": "reduce_33",
+            "ID": "reduce_33",
+            ";": "reduce_33",
+            "while": "reduce_33",
+            "output": "reduce_33",
+            "case": "reduce_33",
+            "default": "reduce_33",
+            "return": "reduce_33",
+            "NUM": "reduce_33"
         },
         "129": {
-            "}": "shift_133"
+            "case": "shift_131",
+            "default": "shift_132",
+            "case_stmt": "goto_133",
+            "default_stmt": "goto_134",
+            "}": "reduce_41"
         },
         "130": {
-            "endif": "shift_134"
+            ";": "shift_43",
+            "(": "shift_44",
+            "{": "shift_32",
+            "break": "shift_46",
+            "if": "shift_47",
+            "while": "shift_48",
+            "return": "shift_49",
+            "switch": "shift_50",
+            "output": "shift_51",
+            "compound_stmt": "goto_52",
+            "statement": "goto_135",
+            "expression_stmt": "goto_54",
+            "selection_stmt": "goto_55",
+            "iteration_stmt": "goto_56",
+            "return_stmt": "goto_57",
+            "switch_stmt": "goto_58",
+            "expression": "goto_59",
+            "var": "goto_60",
+            "simple_expression": "goto_61",
+            "additive_expression": "goto_62",
+            "term": "goto_63",
+            "factor": "goto_64",
+            "call": "goto_65",
+            "PID": "goto_66",
+            "PNUM": "goto_67",
+            "call_output": "goto_68",
+            "NUM": "reduce_70",
+            "ID": "reduce_68"
         },
         "131": {
-            "NUM": "shift_135"
+            "PNUM": "goto_136",
+            "NUM": "reduce_70"
         },
         "132": {
-            "statement_list": "goto_136",
-            "if": "reduce_21",
-            "return": "reduce_21",
-            "}": "reduce_21",
-            "switch": "reduce_21",
-            "case": "reduce_21",
-            "ID": "reduce_21",
-            "NUM": "reduce_21",
-            "default": "reduce_21",
-            "break": "reduce_21",
-            "while": "reduce_21",
-            ";": "reduce_21",
-            "{": "reduce_21",
-            "(": "reduce_21"
+            ":": "shift_137"
         },
         "133": {
-            "if": "reduce_36",
-            "return": "reduce_36",
-            "else": "reduce_36",
-            "}": "reduce_36",
-            "switch": "reduce_36",
-            "endif": "reduce_36",
-            "case": "reduce_36",
-            "ID": "reduce_36",
-            "NUM": "reduce_36",
-            "default": "reduce_36",
-            "break": "reduce_36",
-            "while": "reduce_36",
-            "(": "reduce_36",
-            "{": "reduce_36",
-            ";": "reduce_36"
+            "}": "reduce_37",
+            "case": "reduce_37",
+            "default": "reduce_37"
         },
         "134": {
-            "if": "reduce_32",
-            "return": "reduce_32",
-            "else": "reduce_32",
-            "}": "reduce_32",
-            "switch": "reduce_32",
-            "endif": "reduce_32",
-            "case": "reduce_32",
-            "ID": "reduce_32",
-            "NUM": "reduce_32",
-            "default": "reduce_32",
-            "break": "reduce_32",
-            "while": "reduce_32",
-            "(": "reduce_32",
-            "{": "reduce_32",
-            ";": "reduce_32"
+            "}": "shift_138"
         },
         "135": {
-            "SAVE": "goto_137",
-            "if": "reduce_72",
-            "return": "reduce_72",
-            "switch": "reduce_72",
-            "NUM": "reduce_72",
-            "ID": "reduce_72",
-            ":": "reduce_72",
-            "break": "reduce_72",
-            "while": "reduce_72",
-            ";": "reduce_72",
-            "{": "reduce_72",
-            "(": "reduce_72"
+            "endif": "shift_139"
         },
         "136": {
-            ";": "shift_43",
-            "(": "shift_44",
-            "{": "shift_32",
-            "break": "shift_46",
-            "if": "shift_47",
-            "while": "shift_48",
-            "return": "shift_49",
-            "switch": "shift_50",
-            "compound_stmt": "goto_51",
-            "statement": "goto_52",
-            "expression_stmt": "goto_53",
-            "selection_stmt": "goto_54",
-            "iteration_stmt": "goto_55",
-            "return_stmt": "goto_56",
-            "switch_stmt": "goto_57",
-            "expression": "goto_58",
-            "var": "goto_59",
-            "simple_expression": "goto_60",
-            "additive_expression": "goto_61",
-            "term": "goto_62",
-            "factor": "goto_63",
-            "call": "goto_64",
-            "PID": "goto_65",
-            "PNUM": "goto_66",
-            "NUM": "reduce_69",
-            "ID": "reduce_67",
-            "}": "reduce_40"
+            "NUM": "shift_140"
         },
         "137": {
-            ":": "shift_138"
-        },
-        "138": {
-            "statement_list": "goto_139",
+            "statement_list": "goto_141",
             "if": "reduce_21",
-            "return": "reduce_21",
+            "break": "reduce_21",
             "}": "reduce_21",
             "switch": "reduce_21",
-            "case": "reduce_21",
-            "ID": "reduce_21",
-            "NUM": "reduce_21",
-            "default": "reduce_21",
-            "break": "reduce_21",
-            "while": "reduce_21",
-            ";": "reduce_21",
             "{": "reduce_21",
-            "(": "reduce_21"
+            "(": "reduce_21",
+            "ID": "reduce_21",
+            ";": "reduce_21",
+            "while": "reduce_21",
+            "output": "reduce_21",
+            "case": "reduce_21",
+            "default": "reduce_21",
+            "return": "reduce_21",
+            "NUM": "reduce_21"
+        },
+        "138": {
+            "else": "reduce_36",
+            "if": "reduce_36",
+            "break": "reduce_36",
+            "}": "reduce_36",
+            "switch": "reduce_36",
+            "{": "reduce_36",
+            "endif": "reduce_36",
+            "(": "reduce_36",
+            "ID": "reduce_36",
+            ";": "reduce_36",
+            "while": "reduce_36",
+            "output": "reduce_36",
+            "case": "reduce_36",
+            "default": "reduce_36",
+            "return": "reduce_36",
+            "NUM": "reduce_36"
         },
         "139": {
+            "else": "reduce_32",
+            "if": "reduce_32",
+            "break": "reduce_32",
+            "}": "reduce_32",
+            "switch": "reduce_32",
+            "{": "reduce_32",
+            "endif": "reduce_32",
+            "(": "reduce_32",
+            "ID": "reduce_32",
+            ";": "reduce_32",
+            "while": "reduce_32",
+            "output": "reduce_32",
+            "case": "reduce_32",
+            "default": "reduce_32",
+            "return": "reduce_32",
+            "NUM": "reduce_32"
+        },
+        "140": {
+            "SAVE": "goto_142",
+            "if": "reduce_73",
+            "break": "reduce_73",
+            ":": "reduce_73",
+            "{": "reduce_73",
+            "switch": "reduce_73",
+            "(": "reduce_73",
+            "ID": "reduce_73",
+            ";": "reduce_73",
+            "while": "reduce_73",
+            "output": "reduce_73",
+            "return": "reduce_73",
+            "NUM": "reduce_73"
+        },
+        "141": {
             ";": "shift_43",
             "(": "shift_44",
             "{": "shift_32",
@@ -2489,27 +2610,80 @@ grammar = {
             "while": "shift_48",
             "return": "shift_49",
             "switch": "shift_50",
-            "compound_stmt": "goto_51",
-            "statement": "goto_52",
-            "expression_stmt": "goto_53",
-            "selection_stmt": "goto_54",
-            "iteration_stmt": "goto_55",
-            "return_stmt": "goto_56",
-            "switch_stmt": "goto_57",
-            "expression": "goto_58",
-            "var": "goto_59",
-            "simple_expression": "goto_60",
-            "additive_expression": "goto_61",
-            "term": "goto_62",
-            "factor": "goto_63",
-            "call": "goto_64",
-            "PID": "goto_65",
-            "PNUM": "goto_66",
-            "NUM": "reduce_69",
-            "ID": "reduce_67",
-            "default": "reduce_39",
+            "output": "shift_51",
+            "compound_stmt": "goto_52",
+            "statement": "goto_53",
+            "expression_stmt": "goto_54",
+            "selection_stmt": "goto_55",
+            "iteration_stmt": "goto_56",
+            "return_stmt": "goto_57",
+            "switch_stmt": "goto_58",
+            "expression": "goto_59",
+            "var": "goto_60",
+            "simple_expression": "goto_61",
+            "additive_expression": "goto_62",
+            "term": "goto_63",
+            "factor": "goto_64",
+            "call": "goto_65",
+            "PID": "goto_66",
+            "PNUM": "goto_67",
+            "call_output": "goto_68",
+            "NUM": "reduce_70",
+            "ID": "reduce_68",
+            "}": "reduce_40"
+        },
+        "142": {
+            ":": "shift_143"
+        },
+        "143": {
+            "statement_list": "goto_144",
+            "if": "reduce_21",
+            "break": "reduce_21",
+            "}": "reduce_21",
+            "switch": "reduce_21",
+            "{": "reduce_21",
+            "(": "reduce_21",
+            "ID": "reduce_21",
+            ";": "reduce_21",
+            "while": "reduce_21",
+            "output": "reduce_21",
+            "case": "reduce_21",
+            "default": "reduce_21",
+            "return": "reduce_21",
+            "NUM": "reduce_21"
+        },
+        "144": {
+            ";": "shift_43",
+            "(": "shift_44",
+            "{": "shift_32",
+            "break": "shift_46",
+            "if": "shift_47",
+            "while": "shift_48",
+            "return": "shift_49",
+            "switch": "shift_50",
+            "output": "shift_51",
+            "compound_stmt": "goto_52",
+            "statement": "goto_53",
+            "expression_stmt": "goto_54",
+            "selection_stmt": "goto_55",
+            "iteration_stmt": "goto_56",
+            "return_stmt": "goto_57",
+            "switch_stmt": "goto_58",
+            "expression": "goto_59",
+            "var": "goto_60",
+            "simple_expression": "goto_61",
+            "additive_expression": "goto_62",
+            "term": "goto_63",
+            "factor": "goto_64",
+            "call": "goto_65",
+            "PID": "goto_66",
+            "PNUM": "goto_67",
+            "call_output": "goto_68",
+            "NUM": "reduce_70",
+            "ID": "reduce_68",
             "}": "reduce_39",
-            "case": "reduce_39"
+            "case": "reduce_39",
+            "default": "reduce_39"
         }
     }
 }
@@ -2590,9 +2764,11 @@ class Parser:
                 current_token = self.get_next_token()
             elif next_move[0] == 'reduce':
                 rule = self.grammar[next_move[1]]
+                if int(next_move[1]) == 63:
+                    print(next_move[1])
                 function = self.code_generator.function_dict.get(int(next_move[1]))
                 if function:
-                    if int(next_move[1]) in [67, 68, 69, 70]:
+                    if int(next_move[1]) in [68, 69, 70, 71]:
                         function(lexeme=current_token[1])
                     else:
                         function()

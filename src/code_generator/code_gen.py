@@ -11,27 +11,29 @@ class CodeGenerator:
         self.data_block = DataBlock()
         self.temporaries = TemporariesBlock()
         self.function_dict = {
-            67: self.pid,
-            68: self.push,
-            69: self.push_num,
-            70: self.push,
-            74: self.func,
-            75: self.variable_declaration,
-            76: self.array_declaration,
-            71: self.break_while,
-            72: self.save,
             31: self.jpf,
-            39: self.jpf,
-            73: self.jpf_save,
             32: self.jp,
             33: self.while_end,
-            77: self.label_while,
-            # 78: TODO,
+            39: self.jpf,
             42: self.assign,
             45: self.array_cell,
             46: self.relop,
             50: self.add,
-            54: self.mult
+            54: self.mult,
+
+            68: self.pid,
+            69: self.push,
+            70: self.push_num,
+            71: self.push,
+            72: self.break_while,
+            73: self.save,
+            74: self.jpf_save,
+            75: self.func,
+            76: self.variable_declaration,
+            77: self.array_declaration,
+            78: self.label_while,
+            # 79: TODO,
+            80: self.output
         }
 
     def pid(self, lexeme):
@@ -159,4 +161,9 @@ class CodeGenerator:
         instruction = Instruction('ASSIGN', address + 4 * index, temp, ' ')
         self.program_block.add_instruction(instruction)
         self.semantic_stack.push(temp)
+
+    def output(self):
+        arg_result = self.semantic_stack.pop()
+        instruction = Instruction('PRINT', arg_result, ' ', ' ')
+        self.program_block.add_instruction(instruction)
 
