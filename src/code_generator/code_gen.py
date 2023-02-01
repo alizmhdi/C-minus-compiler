@@ -10,6 +10,29 @@ class CodeGenerator:
         self.program_block = ProgramBlock()
         self.data_block = DataBlock()
         self.temporaries = TemporariesBlock()
+        self.function_dict = {
+            67: self.pid,
+            68: self.push,
+            69: self.push_num,
+            70: self.push,
+            74: self.func,
+            75: self.variable_declaration,
+            76: self.array_declaration,
+            71: self.break_while,
+            72: self.save,
+            31: self.jpf,
+            39: self.jpf,
+            73: self.jpf_save,
+            32: self.jp,
+            33: self.while_end,
+            77: self.label_while,
+            # 78: TODO,
+            42: self.assign,
+            45: self.array_cell,
+            46: self.relop,
+            50: self.add,
+            54: self.mult
+        }
 
     def pid(self, lexeme):
         address = self.data_block.get_address(lexeme)
@@ -35,19 +58,26 @@ class CodeGenerator:
         self.semantic_stack.push(self.program_block.last_index)
         self.program_block.increase_index()
 
-    def push(self, token):
-        self.semantic_stack.push(token)
+    def push(self, lexeme):
+        self.semantic_stack.push(lexeme)
+
+    def push_num(self, lexeme):
+        temp = self.temporaries.get_temp()
+        instruction = Instruction('ASSIGN', f'#{lexeme}', temp, ' ')
+        self.program_block.add_instruction(instruction)
+        self.semantic_stack.push(temp)
 
     def add(self):
         op_1 = self.semantic_stack.pop()
         operator = self.semantic_stack.pop()
         op_2 = self.semantic_stack.pop()
-        t = self.temporaries.get_temp()
+        temp = self.temporaries.get_temp()
         if operator == '+':
-            instruction = Instruction('ADD', op_1, op_2, t)
+            instruction = Instruction('ADD', op_1, op_2, temp)
         else:
-            instruction = Instruction('SUB', op_1, op_2, t)
+            instruction = Instruction('SUB', op_1, op_2, temp)
         self.program_block.add_instruction(instruction)
+        self.semantic_stack.push(temp)
 
     def mult(self):
         op_1 = self.semantic_stack.pop()
