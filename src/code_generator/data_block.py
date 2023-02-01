@@ -9,6 +9,9 @@ class DataBlock:
             self.last_index += 4
         return self.data[symbol]
 
+    def get_value(self, address: int):
+        return self.data[address]
+
     def increase_index(self, size: int):
         self.last_index += 4 * size
 

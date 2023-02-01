@@ -32,8 +32,8 @@ class CodeGenerator:
         self.data_block.increase_index(size)
 
     def save(self):
-        self.program_block.increase_index()
         self.semantic_stack.push(self.program_block.last_index)
+        self.program_block.increase_index()
 
     def push(self, token):
         self.semantic_stack.push(token)
@@ -86,4 +86,45 @@ class CodeGenerator:
         elif operator == '==':
             instruction = Instruction('EQ', op_1, op_2, t)
         self.program_block.add_instruction(instruction)
-        
+
+    def jpf_save(self):
+        instruction_address = self.semantic_stack.pop()
+        instruction = Instruction('JPF', self.semantic_stack.pop(), self.program_block.last_index + 1, ' ')
+        self.program_block.set_instruction(instruction_address, instruction)
+        self.program_block.increase_index()
+        self.semantic_stack.push(self.program_block.last_index)
+
+    def label_while(self):
+        self.semantic_stack.push(self.program_block.last_index)
+        self.program_block.increase_index()
+        temp = self.temporaries.get_temp()
+        self.semantic_stack.push(temp)
+        self.semantic_stack.push(self.program_block.last_index)
+
+    def while_end(self):
+        address_to_jpf = self.semantic_stack.pop()
+        expression = self.semantic_stack.pop()
+        end_of_while_address = self.program_block.last_index + 1
+        instruction = Instruction('JPF', expression, end_of_while_address, ' ')
+        self.program_block.set_instruction(address_to_jpf, instruction)
+
+        address_to_jp = self.semantic_stack.pop()
+        instruction = Instruction('JP', address_to_jp, ' ', ' ')
+        self.program_block.add_instruction(instruction)
+
+        temp_address = self.semantic_stack.pop()
+        instruction = Instruction('ASSIGN', end_of_while_address, temp_address, ' ')
+        self.program_block.set_instruction(self.semantic_stack.pop(), instruction)
+
+    def break_while(self):
+        instruction = Instruction('JP', f'@{self.semantic_stack.get_top(3)}', ' ', ' ')
+        self.program_block.add_instruction(instruction)
+
+    def array_cell(self):
+        index = self.semantic_stack.pop()
+        address = self.semantic_stack.pop()
+        temp = self.temporaries.get_temp()
+        instruction = Instruction('ASSIGN', address + 4 * index, temp, ' ')
+        self.program_block.add_instruction(instruction)
+        self.semantic_stack.push(temp)
+
