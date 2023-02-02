@@ -50,6 +50,7 @@ class CodeGenerator:
 
     def pop_exp(self):
         self.semantic_stack.pop()
+        pass
 
     def variable_declaration(self):
         address = self.semantic_stack.pop()
@@ -155,7 +156,7 @@ class CodeGenerator:
         self.program_block.add_instruction(instruction)
 
         temp_address = self.semantic_stack.pop()
-        instruction = Instruction('ASSIGN', end_of_while_address, temp_address, ' ')
+        instruction = Instruction('ASSIGN', f'#{end_of_while_address}', temp_address, ' ')
         self.program_block.set_instruction(self.semantic_stack.pop(), instruction)
 
     def break_while(self):
@@ -174,5 +175,6 @@ class CodeGenerator:
 
     def output(self):
         arg_result = self.semantic_stack.pop()
+        self.semantic_stack.push(arg_result)
         instruction = Instruction('PRINT', arg_result, ' ', ' ')
         self.program_block.add_instruction(instruction)

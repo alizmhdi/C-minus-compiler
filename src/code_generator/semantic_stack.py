@@ -8,8 +8,7 @@ class SemanticStack:
         self.top += 1
 
     def pop(self):
-        if self.top <= -1:
-            return None
+        self.top -= 1
         return self.stack.pop()
 
     def get_top(self, index=0):

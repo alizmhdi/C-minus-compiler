@@ -89,9 +89,7 @@ class Parser:
                 rule = self.grammar[next_move[1]]
                 function = self.code_generator.function_dict.get(int(next_move[1]))
                 if function:
-                    if int(next_move[1]) == 28:
-                        pass
-                    elif int(next_move[1]) in [68, 69, 70, 71, 81]:
+                    if int(next_move[1]) in [68, 69, 70, 71, 81]:
                         function(current_token[1])
                     else:
                         function()
