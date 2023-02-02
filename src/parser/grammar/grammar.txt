@@ -27,8 +27,9 @@
 27. addop -> P_OP + | P_OP -
 28. term -> term mulop factor MULTOP | factor
 29. mulop -> P_OP * | P_OP /
-30. factor -> ( expression ) | var | call | PNUM NUM
+30. factor -> ( expression ) | var | call | PNUM NUM | call_output
 31. call -> PID ID ( args )
+xx. call_output -> output ( args ) OUTPUT
 32. args -> arg_list | Epsilon
 33. arg_list -> arg_list , expression | expression
 34. PID -> Epsilon

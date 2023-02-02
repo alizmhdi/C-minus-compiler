@@ -88,9 +88,9 @@ class CodeGenerator:
         temp = self.temporaries.get_temp()
         instruction = None
         if operator == '*':
-            instruction = Instruction('MULT', op_1, op_2, temp)
+            instruction = Instruction('MULT', op_2, op_1, temp)
         elif operator == '/':
-            instruction = Instruction('DIV', op_1, op_2, temp)
+            instruction = Instruction('DIV', op_2, op_1, temp)
         self.program_block.add_instruction(instruction)
         self.semantic_stack.push(temp)
 
@@ -115,9 +115,9 @@ class CodeGenerator:
         temp = self.temporaries.get_temp()
         instruction = None
         if operator == '<':
-            instruction = Instruction('LT', op_1, op_2, temp)
+            instruction = Instruction('LT', op_2, op_1, temp)
         elif operator == '==':
-            instruction = Instruction('EQ', op_1, op_2, temp)
+            instruction = Instruction('EQ', op_2, op_1, temp)
         self.program_block.add_instruction(instruction)
         self.semantic_stack.push(temp)
 
@@ -125,8 +125,8 @@ class CodeGenerator:
         instruction_address = self.semantic_stack.pop()
         instruction = Instruction('JPF', self.semantic_stack.pop(), self.program_block.last_index + 1, ' ')
         self.program_block.set_instruction(instruction_address, instruction)
-        self.program_block.increase_index()
         self.semantic_stack.push(self.program_block.last_index)
+        self.program_block.increase_index()
 
     def label_while(self):
         self.semantic_stack.push(self.program_block.last_index)
@@ -158,12 +158,16 @@ class CodeGenerator:
         index = self.semantic_stack.pop()
         address = self.semantic_stack.pop()
         temp = self.temporaries.get_temp()
-        instruction = Instruction('ASSIGN', address + 4 * index, temp, ' ')
+        instruction = Instruction('MULT', index, '#4', temp)
         self.program_block.add_instruction(instruction)
-        self.semantic_stack.push(temp)
+        instruction = Instruction('ADD', address, temp, temp)
+        self.program_block.add_instruction(instruction)
+        temp1 = self.temporaries.get_temp()
+        instruction = Instruction('ASSIGN', temp, temp1, ' ')
+        self.program_block.add_instruction(instruction)
+        self.semantic_stack.push(temp1)
 
     def output(self):
         arg_result = self.semantic_stack.pop()
         instruction = Instruction('PRINT', arg_result, ' ', ' ')
         self.program_block.add_instruction(instruction)
-

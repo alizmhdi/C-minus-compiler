@@ -14,5 +14,3 @@ class DataBlock:
 
     def increase_index(self, size: int):
         self.last_index += 4 * size
-
-

@@ -25,4 +25,4 @@ class ProgramBlock:
         self.last_index += 1
 
     def __str__(self) -> str:
-        return '\n'.join([f'{i}\t{inst}' for i, inst in enumerate(self.instructions) if inst is not None])
+        return '\n'.join([f'{i}\t({inst})' for i, inst in enumerate(self.instructions) if inst is not None])
