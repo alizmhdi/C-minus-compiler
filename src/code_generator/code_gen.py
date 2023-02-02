@@ -114,8 +114,8 @@ class CodeGenerator:
     def jpf(self):
         address = self.semantic_stack.pop()
         condition = self.semantic_stack.pop()
-        instruction = Instruction('JPF', condition, address, ' ')
-        self.program_block.add_instruction(instruction)
+        instruction = Instruction('JPF', condition, self.program_block.last_index, ' ')
+        self.program_block.set_instruction(address, instruction)
 
     def relop(self):
         op_1 = self.semantic_stack.pop()
@@ -148,7 +148,7 @@ class CodeGenerator:
         address_to_jpf = self.semantic_stack.pop()
         expression = self.semantic_stack.pop()
         end_of_while_address = self.program_block.last_index + 1
-        instruction = Instruction('JPF', expression, end_of_while_address, ' ')
+        instruction = Instruction('JPF', expression, f'#{end_of_while_address}', ' ')
         self.program_block.set_instruction(address_to_jpf, instruction)
 
         address_to_jp = self.semantic_stack.pop()
