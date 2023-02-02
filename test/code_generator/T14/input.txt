@@ -59,7 +59,7 @@ int main(void){
     } else {
         abs2 = a;
     } endif
-    while (abs <= abs2) {
+    while (abs < abs2) {
         if (i * b == a) {
             flag = 1;
             output(i * b);

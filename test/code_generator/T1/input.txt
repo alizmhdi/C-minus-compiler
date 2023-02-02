@@ -11,5 +11,5 @@ void main(void){
     output(b - a);
     } else {
     output(c / 2);
-    }
+    } endif
  }

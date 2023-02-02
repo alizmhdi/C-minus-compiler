@@ -13,4 +13,4 @@ class DataBlock:
         return self.data[address]
 
     def increase_index(self, size: int):
-        self.last_index += 4 * size
+        self.last_index += 4 * int(size)

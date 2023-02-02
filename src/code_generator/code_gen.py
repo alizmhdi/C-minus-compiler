@@ -20,7 +20,7 @@ class CodeGenerator:
             46: self.relop,
             50: self.add,
             54: self.mult,
-
+            28: self.pop_exp,
             68: self.pid,
             69: self.push,
             70: self.push_num,
@@ -33,7 +33,8 @@ class CodeGenerator:
             77: self.array_declaration,
             78: self.label_while,
             # 79: TODO,
-            80: self.output
+            80: self.output,
+            81: self.push_size,
         }
 
     def pid(self, lexeme):
@@ -44,7 +45,11 @@ class CodeGenerator:
         value = self.semantic_stack.pop()
         address = self.semantic_stack.pop()
         instruction = Instruction('ASSIGN', value, address, ' ')
+        self.semantic_stack.push(value)
         self.program_block.add_instruction(instruction)
+
+    def pop_exp(self):
+        self.semantic_stack.pop()
 
     def variable_declaration(self):
         address = self.semantic_stack.pop()
@@ -69,15 +74,18 @@ class CodeGenerator:
         self.program_block.add_instruction(instruction)
         self.semantic_stack.push(temp)
 
+    def push_size(self, size):
+        self.semantic_stack.push(size)
+
     def add(self):
         op_1 = self.semantic_stack.pop()
         operator = self.semantic_stack.pop()
         op_2 = self.semantic_stack.pop()
         temp = self.temporaries.get_temp()
         if operator == '+':
-            instruction = Instruction('ADD', op_1, op_2, temp)
+            instruction = Instruction('ADD', op_2, op_1, temp)
         else:
-            instruction = Instruction('SUB', op_1, op_2, temp)
+            instruction = Instruction('SUB', op_2, op_1, temp)
         self.program_block.add_instruction(instruction)
         self.semantic_stack.push(temp)
 
@@ -160,12 +168,9 @@ class CodeGenerator:
         temp = self.temporaries.get_temp()
         instruction = Instruction('MULT', index, '#4', temp)
         self.program_block.add_instruction(instruction)
-        instruction = Instruction('ADD', address, temp, temp)
+        instruction = Instruction('ADD', f'#{address}', temp, temp)
         self.program_block.add_instruction(instruction)
-        temp1 = self.temporaries.get_temp()
-        instruction = Instruction('ASSIGN', temp, temp1, ' ')
-        self.program_block.add_instruction(instruction)
-        self.semantic_stack.push(temp1)
+        self.semantic_stack.push(f'@{temp}')
 
     def output(self):
         arg_result = self.semantic_stack.pop()

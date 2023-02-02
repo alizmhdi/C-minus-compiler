@@ -15,7 +15,7 @@ int main(void)
     t = 0;
     p = 12321;
     q = 1234;
-    c = 0
+    c = 0;
 
     while(t == 0)
     {

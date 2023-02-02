@@ -1,2 +1,0 @@
-PRINT    4
-PRINT    -2
