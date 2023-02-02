@@ -1,7 +1,7 @@
 1. program -> declaration_list
 2. declaration_list -> declaration_list declaration | declaration
 3. declaration -> var_declaration | fun_declaration
-4. var_declaration -> type_specifier PID ID VAR_DEC ; | type_specifier PID ID [ PNUM NUM ] ARRAY_DEC ;
+4. var_declaration -> type_specifier PID ID VAR_DEC ; | type_specifier PID ID [ PSIZE NUM ] ARRAY_DEC ;
 5. type_specifier -> PTYPE int | void
 6. fun_declaration -> type_specifier PID ID FUNC ( params ) compound_stmt
 7. params -> param_list | void

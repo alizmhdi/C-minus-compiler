@@ -11,7 +11,7 @@ declaration: var_declaration
 | fun_declaration
 ;
 var_declaration: type_specifier PID ID VAR_DEC ';'
-| type_specifier PID ID '[' PNUM NUM ']' ARRAY_DEC ';'
+| type_specifier PID ID '[' PSIZE NUM ']' ARRAY_DEC ';'
 ;
 type_specifier: PTYPE "int"
 | "void"
@@ -127,5 +127,7 @@ LABEL_WHILE: /* epsilon */
 LABEL_SWITCH: /* epsilon */
 ;
 call_output: "output" '(' args ')'
+;
+PSIZE: /* epsilon */
 ;
 %%
