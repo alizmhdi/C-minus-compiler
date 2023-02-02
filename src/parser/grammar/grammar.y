@@ -61,7 +61,7 @@ case_stmts: case_stmts case_stmt
 ;
 case_stmt: "case" PNUM NUM SAVE SAVE ':' statement_list
 ;
-default_stmt: SAVE "default" ':' statement_list
+default_stmt: "default" ':' statement_list
 | /* epsilon */
 ;
 expression: var '=' expression

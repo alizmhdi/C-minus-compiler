@@ -163,14 +163,18 @@ class CodeGenerator:
         self.program_block.set_instruction(self.semantic_stack.pop(), instruction)
         self.fill_breaks(self.program_block.last_index)
 
-    def fill_breaks(self, end_while_address):
-        if -1 not in self.break_list:
+    def fill_breaks(self, end_address):
+        end_index = -1
+        for i, address in enumerate(self.break_list):
+            if address < 0:
+                end_index = i
+                break
+        if end_index < -1:
             return
-        while_index = self.break_list.index(-1)
-        for address in self.break_list[:while_index]:
-            instruction = Instruction('JP', end_while_address, ' ', ' ')
+        for address in self.break_list[:end_index]:
+            instruction = Instruction('JP', end_address, ' ', ' ')
             self.program_block.set_instruction(address, instruction)
-        self.break_list = self.break_list[while_index+1:]
+        self.break_list = self.break_list[end_index + 1:]
 
     def break_while(self):
         self.break_list.insert(0, self.program_block.last_index)
@@ -191,6 +195,9 @@ class CodeGenerator:
         instruction = Instruction('PRINT', arg_result, ' ', ' ')
         self.program_block.add_instruction(instruction)
 
+    def label_switch(self):
+        self.break_list.insert(0, -1)
+
     def jp_case(self):
         jump_line = self.semantic_stack.pop()
         equal_condition_line = self.semantic_stack.pop()
@@ -200,23 +207,10 @@ class CodeGenerator:
         temp = self.temporaries.get_temp()
         instruction = Instruction('EQ', switch_value, case_value, temp)
         self.program_block.set_instruction(equal_condition_line, instruction)
-        instruction = Instruction('JPF', temp, self.program_block.last_index + 1, ' ')
+        instruction = Instruction('JPF', temp, self.program_block.last_index, ' ')
         self.program_block.set_instruction(jump_line, instruction)
 
-        check_switch = self.semantic_stack.get_top(1)
-        instruction = Instruction('ASSIGN', '#0', check_switch, ' ')
-        self.program_block.add_instruction(instruction)
-
     def end_switch(self):
-        default_line = self.semantic_stack.pop()
         self.semantic_stack.pop()
-        check_switch = self.semantic_stack.pop()
-        instruction = Instruction('JPF', check_switch, self.program_block.last_index, ' ')
-        self.program_block.set_instruction(default_line, instruction)
-
-    def label_switch(self):
-        temp = self.temporaries.get_temp()
-        self.semantic_stack.push(temp)
-        instruction = Instruction('ASSIGN', '#1', temp, ' ')
-        self.program_block.add_instruction(instruction)
+        self.fill_breaks(self.program_block.last_index)
 
