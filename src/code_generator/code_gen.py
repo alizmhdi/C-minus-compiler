@@ -14,7 +14,8 @@ class CodeGenerator:
             31: self.jpf,
             32: self.jp,
             33: self.while_end,
-            39: self.jpf,
+            36: self.end_switch,
+            39: self.jp_case,
             42: self.assign,
             45: self.array_cell,
             46: self.relop,
@@ -32,7 +33,7 @@ class CodeGenerator:
             76: self.variable_declaration,
             77: self.array_declaration,
             78: self.label_while,
-            # 79: TODO,
+            79: self.label_switch,
             80: self.output,
             81: self.push_size,
         }
@@ -174,7 +175,36 @@ class CodeGenerator:
         self.semantic_stack.push(f'@{temp}')
 
     def output(self):
-        arg_result = self.semantic_stack.pop()
-        self.semantic_stack.push(arg_result)
+        arg_result = self.semantic_stack.get_top()
         instruction = Instruction('PRINT', arg_result, ' ', ' ')
         self.program_block.add_instruction(instruction)
+
+    def jp_case(self):
+        jump_line = self.semantic_stack.pop()
+        equal_condition_line = self.semantic_stack.pop()
+        case_value = self.semantic_stack.pop()
+        switch_value = self.semantic_stack.get_top()
+
+        temp = self.temporaries.get_temp()
+        instruction = Instruction('EQ', switch_value, case_value, temp)
+        self.program_block.set_instruction(equal_condition_line, instruction)
+        instruction = Instruction('JPF', temp, self.program_block.last_index + 1, ' ')
+        self.program_block.set_instruction(jump_line, instruction)
+
+        check_switch = self.semantic_stack.get_top(1)
+        instruction = Instruction('ASSIGN', '#0', check_switch, ' ')
+        self.program_block.add_instruction(instruction)
+
+    def end_switch(self):
+        default_line = self.semantic_stack.pop()
+        self.semantic_stack.pop()
+        check_switch = self.semantic_stack.pop()
+        instruction = Instruction('JPF', check_switch, self.program_block.last_index, ' ')
+        self.program_block.set_instruction(default_line, instruction)
+
+    def label_switch(self):
+        temp = self.temporaries.get_temp()
+        self.semantic_stack.push(temp)
+        instruction = Instruction('ASSIGN', '#1', temp, ' ')
+        self.program_block.add_instruction(instruction)
+

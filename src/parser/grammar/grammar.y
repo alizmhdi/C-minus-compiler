@@ -59,9 +59,9 @@ switch_stmt: "switch" LABEL_SWITCH '(' expression ')' '{' case_stmts default_stm
 case_stmts: case_stmts case_stmt
 | /* epsilon */
 ;
-case_stmt: "case" PNUM NUM SAVE ':' statement_list
+case_stmt: "case" PNUM NUM SAVE SAVE ':' statement_list
 ;
-default_stmt: "default" ':' statement_list
+default_stmt: SAVE "default" ':' statement_list
 | /* epsilon */
 ;
 expression: var '=' expression

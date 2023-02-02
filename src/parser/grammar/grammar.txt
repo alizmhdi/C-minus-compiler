@@ -15,10 +15,10 @@
 15. selection_stmt -> if ( expression ) SAVE statement endif JPF | if ( expression ) SAVE statement JPF_SAVE else statement endif JP
 16. iteration_stmt -> while LABEL_WHILE ( expression ) SAVE statement WHILE
 17. return_stmt -> return ; | return expression ;
-18. switch_stmt -> switch LABEL_SWITCH ( expression ) { case_stmts default_stmt }
+18. switch_stmt -> switch LABEL_SWITCH ( expression ) { case_stmts default_stmt } END_SWITCH
 19. case_stmts -> case_stmts case_stmt | Epsilon
-20. case_stmt -> case PNUM NUM SAVE : statement_list JPF
-21. default_stmt -> default : statement_list | Epsilon
+20. case_stmt -> case PNUM NUM SAVE SAVE : statement_list JP_CASE
+21. default_stmt -> SAVE default : statement_list | Epsilon
 22. expression -> var = expression ASSIGN | simple_expression
 23. var -> PID ID | PID ID [ expression ] ARRAY_CELL
 24. simple_expression -> additive_expression relop additive_expression RELOP | additive_expression
