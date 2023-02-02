@@ -4,6 +4,7 @@ from anytree import Node, RenderTree
 from writer.syntax_error_writer import SyntaxErrorWriter
 from writer.parse_tree_writer import ParseTreeWriter
 from code_generator.code_gen import CodeGenerator
+from writer.code_generator_writer import CodeGeneratorWriter
 import json
 
 
@@ -30,6 +31,7 @@ class Parser:
         self.errors = []
         self.syntax_error_writer = SyntaxErrorWriter('syntax_errors.txt')
         self.parse_tree_writer = ParseTreeWriter('parse_tree.txt')
+        self.code_generator_writer = CodeGeneratorWriter('output.txt')
         self.code_generator = CodeGenerator()
 
     def get_next_token(self):
@@ -74,7 +76,7 @@ class Parser:
                 Node('$', left_rule_node)
                 self.parse_tree_writer.write(Parser.format_tree(left_rule_node))
                 self.syntax_error_writer.write(self.errors)
-                print(len(self.code_generator.program_block.instructions))
+                self.code_generator_writer.write(self.code_generator.program_block)
                 print(self.code_generator.program_block)
                 return
             elif next_move[0] == 'shift':
