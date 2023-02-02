@@ -10,6 +10,7 @@ class CodeGenerator:
         self.program_block = ProgramBlock()
         self.data_block = DataBlock()
         self.temporaries = TemporariesBlock()
+        self.break_list = []
         self.function_dict = {
             31: self.jpf,
             32: self.jp,
@@ -139,6 +140,7 @@ class CodeGenerator:
         self.program_block.increase_index()
 
     def label_while(self):
+        self.break_list.insert(0, -1)
         self.semantic_stack.push(self.program_block.last_index)
         self.program_block.increase_index()
         temp = self.temporaries.get_temp()
@@ -159,10 +161,20 @@ class CodeGenerator:
         temp_address = self.semantic_stack.pop()
         instruction = Instruction('ASSIGN', f'#{end_of_while_address}', temp_address, ' ')
         self.program_block.set_instruction(self.semantic_stack.pop(), instruction)
+        self.fill_breaks(self.program_block.last_index)
+
+    def fill_breaks(self, end_while_address):
+        if -1 not in self.break_list:
+            return
+        while_index = self.break_list.index(-1)
+        for address in self.break_list[:while_index]:
+            instruction = Instruction('JP', end_while_address, ' ', ' ')
+            self.program_block.set_instruction(address, instruction)
+        self.break_list = self.break_list[while_index+1:]
 
     def break_while(self):
-        instruction = Instruction('JP', f'@{self.semantic_stack.get_top(3)}', ' ', ' ')
-        self.program_block.add_instruction(instruction)
+        self.break_list.insert(0, self.program_block.last_index)
+        self.program_block.increase_index()
 
     def array_cell(self):
         index = self.semantic_stack.pop()

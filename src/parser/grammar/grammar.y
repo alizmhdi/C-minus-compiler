@@ -43,7 +43,7 @@ statement: expression_stmt
 | switch_stmt
 ;
 expression_stmt: expression ';'
-| "break" BREAK_JP ';'
+| "break" BREAK_WHILE ';'
 | ';'
 ;
 selection_stmt: "if" '(' expression ')' SAVE statement "endif"
@@ -110,7 +110,7 @@ PNUM: /* epsilon */
 ;
 P_OP: /* epsilon */
 ;
-BREAK_JP: /* epsilon */
+BREAK_WHILE: /* epsilon */
 ;
 SAVE: /* epsilon */
 ;
