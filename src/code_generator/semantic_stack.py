@@ -12,4 +12,6 @@ class SemanticStack:
         return self.stack.pop()
 
     def get_top(self, index=0):
+        if self.top - index < 0:
+            return None
         return self.stack[self.top - index]

@@ -1,9 +1,9 @@
 1. program -> declaration_list
 2. declaration_list -> declaration_list declaration | declaration
 3. declaration -> var_declaration | fun_declaration
-4. var_declaration -> type_specifier PID ID VAR_DEC ; | type_specifier PID ID [ PSIZE NUM ] ARRAY_DEC ;
+4. var_declaration -> type_specifier PID_VAR_DEC ID VAR_DEC ; | type_specifier PID ID [ PSIZE NUM ] ARRAY_DEC ;
 5. type_specifier -> PTYPE int | void
-6. fun_declaration -> type_specifier PID ID FUNC ( params ) compound_stmt
+6. fun_declaration -> type_specifier PID_FUNC_DEC ID FUNC ( params ) compound_stmt END_FUNC
 7. params -> param_list | void
 8. param_list -> param_list , param | param
 9. param -> type_specifier PID ID | type_specifier PID ID [ ]
@@ -28,7 +28,7 @@
 28. term -> term mulop factor MULTOP | factor
 29. mulop -> P_OP * | P_OP /
 30. factor -> ( expression ) | var | call | PNUM NUM | call_output
-31. call -> PID ID ( args )
+31. call -> PID ID SAVE_FUNC ( args )
 xx. call_output -> output ( args ) OUTPUT
 32. args -> arg_list | Epsilon
 33. arg_list -> arg_list , expression | expression

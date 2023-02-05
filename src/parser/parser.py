@@ -78,6 +78,8 @@ class Parser:
                 self.syntax_error_writer.write(self.errors)
                 self.code_generator_writer.write(self.code_generator.program_block)
                 print(self.code_generator.program_block)
+                print("*" * 50)
+                print(self.code_generator.data_block)
                 return
             elif next_move[0] == 'shift':
                 if current_token:
@@ -91,7 +93,7 @@ class Parser:
                 rule = self.grammar[next_move[1]]
                 function = self.code_generator.function_dict.get(int(next_move[1]))
                 if function:
-                    if int(next_move[1]) in [68, 69, 70, 71, 81]:
+                    if int(next_move[1]) in [68, 69, 70, 71, 81, 83]:
                         function(current_token[1])
                     else:
                         function()

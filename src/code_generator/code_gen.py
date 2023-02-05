@@ -11,6 +11,8 @@ class CodeGenerator:
         self.data_block = DataBlock()
         self.temporaries = TemporariesBlock()
         self.break_list = []
+        self.args_num = 0
+        self.current_call_func = None
         self.function_dict = {
             31: self.jpf,
             32: self.jp,
@@ -37,10 +39,24 @@ class CodeGenerator:
             79: self.label_switch,
             80: self.output,
             81: self.push_size,
+            10: self.end_func,
+            15: self.add_param,
+            16: self.add_param,
+            9: self.push_void,
+            67: self.increase_args_num,
+            66: self.increase_args_num,
+            63: self.reset_args_num,
+            82: self.save_func,
+            83: self.pid_dec,
         }
 
     def pid(self, lexeme):
-        address = self.data_block.get_address(lexeme)
+        data = self.data_block.get_data(lexeme)
+        self.semantic_stack.push(data.address)
+
+    def pid_dec(self, lexeme):
+        typ = self.semantic_stack.pop()
+        address = self.data_block.create_data(lexeme, typ)
         self.semantic_stack.push(address)
 
     def assign(self):
@@ -58,11 +74,18 @@ class CodeGenerator:
         address = self.semantic_stack.pop()
         instruction = Instruction('ASSIGN', '#0', address, ' ')
         self.program_block.add_instruction(instruction)
+        data = self.data_block.get_data_from_address(address)
+        data.set_keyword('var')
 
     def array_declaration(self):
         size = self.semantic_stack.pop()
-        self.variable_declaration()
+        address = self.semantic_stack.pop()
+        instruction = Instruction('ASSIGN', '#0', address, ' ')
+        self.program_block.add_instruction(instruction)
         self.data_block.increase_index(size)
+        data = self.data_block.get_data_from_address(address)
+        data.set_keyword('array')
+        data.set_num_args(size)
 
     def save(self):
         self.semantic_stack.push(self.program_block.last_index)
@@ -70,6 +93,9 @@ class CodeGenerator:
 
     def push(self, lexeme):
         self.semantic_stack.push(lexeme)
+
+    def push_void(self):
+        self.semantic_stack.push('void')
 
     def push_num(self, lexeme):
         temp = self.temporaries.get_temp()
@@ -106,7 +132,10 @@ class CodeGenerator:
         self.semantic_stack.push(temp)
 
     def func(self):
-        pass
+        address = self.semantic_stack.get_top()
+        data = self.data_block.get_data_from_address(address)
+        data.set_keyword('func')
+        self.data_block.add_virtual_row()
 
     def jp(self):
         address = self.semantic_stack.pop()
@@ -169,14 +198,16 @@ class CodeGenerator:
             if address < 0:
                 end_index = i
                 break
-        if end_index < -1:
-            return
+        if end_index <= -1:
+            raise Exception('Error in break list')
         for address in self.break_list[:end_index]:
             instruction = Instruction('JP', end_address, ' ', ' ')
             self.program_block.set_instruction(address, instruction)
         self.break_list = self.break_list[end_index + 1:]
 
     def break_while(self):
+        if len(self.break_list) == 0:
+            raise Exception('Break outside of while')
         self.break_list.insert(0, self.program_block.last_index)
         self.program_block.increase_index()
 
@@ -214,3 +245,31 @@ class CodeGenerator:
         self.semantic_stack.pop()
         self.fill_breaks(self.program_block.last_index)
 
+    def end_func(self):
+        self.data_block.end_scope()
+        self.semantic_stack.pop()
+
+    def add_param(self):
+        param_address = self.semantic_stack.pop()
+        param_data = self.data_block.get_data_from_address(param_address)
+        param_data.set_keyword('param')
+        func_address = self.semantic_stack.get_top()
+        func_data = self.data_block.get_data_from_address(func_address)
+        func_data.add_param(len(self.data_block.all_data) - 1)
+        # TODO: get index of param from its data
+
+    def increase_args_num(self):
+        self.args_num += 1
+
+    def reset_args_num(self):
+        func_data = self.data_block.get_data_from_address(self.current_call_func)
+        if len(func_data.params) != self.args_num:
+            raise Exception('Wrong number of arguments')
+        for i in range(self.args_num):
+            self.semantic_stack.pop()
+        self.current_call_func = None
+        self.args_num = 0
+
+    def save_func(self):
+        func_addr = self.semantic_stack.get_top()
+        self.current_call_func = func_addr

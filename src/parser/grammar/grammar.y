@@ -10,13 +10,13 @@ declaration_list: declaration_list declaration
 declaration: var_declaration
 | fun_declaration
 ;
-var_declaration: type_specifier PID ID VAR_DEC ';'
-| type_specifier PID ID '[' PSIZE NUM ']' ARRAY_DEC ';'
+var_declaration: type_specifier PID_DEC ID VAR_DEC ';'
+| type_specifier PID_DEC ID '[' PSIZE NUM ']' ARRAY_DEC ';'
 ;
 type_specifier: PTYPE "int"
 | "void"
 ;
-fun_declaration: type_specifier PID ID FUNC '(' params ')' compound_stmt
+fun_declaration: type_specifier PID_DEC ID FUNC '(' params ')' compound_stmt
 ;
 params: param_list
 | "void"
@@ -24,8 +24,8 @@ params: param_list
 param_list: param_list ',' param
 | param
 ;
-param: type_specifier PID ID
-| type_specifier PID ID '[' ']'
+param: type_specifier PID_DEC ID
+| type_specifier PID_DEC ID '[' ']'
 ;
 compound_stmt: '{' local_declarations statement_list '}'
 ;
@@ -94,7 +94,7 @@ factor: '(' expression ')'
 | PNUM NUM
 | call_output
 ;
-call: PID ID '(' args ')'
+call: PID ID SAVE_FUNC '(' args ')'
 ;
 args: arg_list
 | /* epsilon */
@@ -129,5 +129,9 @@ LABEL_SWITCH: /* epsilon */
 call_output: "output" '(' args ')'
 ;
 PSIZE: /* epsilon */
+;
+SAVE_FUNC: /* epsilon */
+;
+PID_DEC: /* epsilon */
 ;
 %%
