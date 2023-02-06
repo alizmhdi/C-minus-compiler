@@ -1,7 +1,7 @@
 class TemporariesBlock:
     def __init__(self):
         self.temporaries = {}
-        self.last_index = 3000
+        self.last_index = 3001
 
     def get_temp(self):
         self.last_index += 1

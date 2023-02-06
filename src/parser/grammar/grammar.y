@@ -2,7 +2,7 @@
 %token ID
 %start program
 %%
-program: declaration_list
+program: SAVE declaration_list
 ;
 declaration_list: declaration_list declaration
 | declaration
@@ -16,7 +16,7 @@ var_declaration: type_specifier PID_DEC ID VAR_DEC ';'
 type_specifier: PTYPE "int"
 | "void"
 ;
-fun_declaration: type_specifier PID_DEC ID FUNC '(' params ')' compound_stmt
+fun_declaration: type_specifier PID_DEC ID FUNC '(' params ')' END_FUNC compound_stmt
 ;
 params: param_list
 | "void"
@@ -133,5 +133,7 @@ PSIZE: /* epsilon */
 SAVE_FUNC: /* epsilon */
 ;
 PID_DEC: /* epsilon */
+;
+END_FUNC: /* epsilon */
 ;
 %%

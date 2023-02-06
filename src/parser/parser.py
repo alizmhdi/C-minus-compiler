@@ -79,7 +79,7 @@ class Parser:
                 self.parse_tree_writer.write(Parser.format_tree(left_rule_node))
                 self.syntax_error_writer.write(self.errors)
                 self.code_generator_writer.write(self.code_generator.program_block)
-                # print(self.code_generator.program_block)
+                print(self.code_generator.program_block)
                 # print("*" * 50)
                 # print(self.code_generator.data_block)
                 # print("*" * 50)

@@ -13,6 +13,9 @@ class CodeGenerator:
         self.break_list = []
         self.args = []
         self.current_call_func = None
+        self.current_return_value_addr = None
+        self.current_func = None
+        self.ra = 3000
         self.function_dict = {
             31: self.jpf,
             32: self.jp,
@@ -48,7 +51,8 @@ class CodeGenerator:
             63: self.reset_args,
             82: self.save_func,
             83: self.pid_dec,
-            35: self.pop_exp
+            35: self.return_function,
+            84: self.end_func_dec
         }
 
     def pid(self, lexeme):
@@ -145,6 +149,16 @@ class CodeGenerator:
         data = self.data_block.get_data_from_address(address)
         self.data_block.add_virtual_row()
         data.set_keyword('func')
+        data.set_line(self.program_block.last_index)
+        temp = self.temporaries.get_temp()
+        data.set_return_value_addr(temp)
+        self.current_return_value_addr = temp
+        temp = self.temporaries.get_temp()
+        data.set_return_addr(temp)
+        self.current_func = data
+        if data.lexeme == 'main':
+            instruction = Instruction('JP', f'#{self.program_block.last_index}', ' ', ' ')
+            self.program_block.set_instruction(0, instruction)
 
     def jp(self):
         address = self.semantic_stack.pop()
@@ -256,8 +270,7 @@ class CodeGenerator:
         self.semantic_stack.pop()
         self.fill_breaks(self.program_block.last_index)
 
-    def end_func(self):
-        self.data_block.end_scope()
+    def end_func_dec(self):
         self.semantic_stack.pop()
 
     def add_param(self, typ='int'):
@@ -281,15 +294,33 @@ class CodeGenerator:
         elif self.check_args_types():
             type_checked = self.check_args_types()
             error = f"Mismatch in type of argument 1 of '{func_data.lexeme}'. Expected '{type_checked[1]}' but got '{type_checked[0]}' instead."
-        for i in self.args:
-            self.semantic_stack.pop()
-        self.current_call_func = None
-        self.args = []
         if error:
+            self.current_call_func = None
+            self.args = []
             raise Exception(error)
 
+        func_data = self.data_block.get_data_from_address(self.current_call_func)
+        params = func_data.params
+        for i, param in enumerate(params):
+            param_data = self.data_block.get_data_from_index(param)
+            instruction = Instruction('ASSIGN', self.args[i], param_data.address, ' ')
+            self.program_block.add_instruction(instruction)
+
+        instruction = Instruction('ASSIGN', f'#{self.program_block.last_index + 2}', func_data.return_address, ' ')
+        self.program_block.add_instruction(instruction)
+        instruction = Instruction('JP', f'#{func_data.line}', ' ', ' ')
+        self.program_block.add_instruction(instruction)
+        temp = self.temporaries.get_temp()
+        instruction = Instruction('ASSIGN', func_data.return_value_address, temp, ' ')
+        self.program_block.add_instruction(instruction)
+        for i in self.args:
+            self.semantic_stack.pop()
+        self.semantic_stack.push(temp)
+        self.current_call_func = None
+        self.args = []
+
     def save_func(self):
-        func_addr = self.semantic_stack.get_top()
+        func_addr = self.semantic_stack.pop()
         self.current_call_func = func_addr
 
     def get_type(self, address):
@@ -310,3 +341,16 @@ class CodeGenerator:
                 return arg_type[1], param_data.type
 
         return None
+
+    def return_function(self):
+        return_value = self.semantic_stack.pop()
+        instruction = Instruction('ASSIGN', return_value, self.current_return_value_addr, ' ')
+        self.program_block.add_instruction(instruction)
+        instruction = Instruction('JP', f'@{self.current_func.return_address}', ' ', ' ')
+        self.program_block.add_instruction(instruction)
+
+    def end_func(self):
+        # self.semantic_stack.pop()
+        self.data_block.end_scope()
+        self.current_return_value_addr = None
+        self.current_func = None

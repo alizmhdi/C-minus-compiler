@@ -7,6 +7,9 @@ class Data:
         self.scope = scope
         self.type = typ
         self.params = []
+        self.line = 0
+        self.return_value_address = 0
+        self.return_address = 0
 
     def set_keyword(self, keyword):
         if self.type == 'void' and keyword != 'func':
@@ -23,6 +26,15 @@ class Data:
     def add_type(self, typ):
         self.type = typ
 
+    def set_line(self, line: int):
+        self.line = line
+
+    def set_return_value_addr(self, address):
+        self.return_value_address = address
+
+    def set_return_addr(self, address):
+        self.return_address = address
+
     def __str__(self):
         return f'lexeme: {self.lexeme},\t address: {self.address},\t keyword: {self.keyword},\t type: {self.type},\t num_args: {self.num_args},\t scope: {self.scope},\t params: {self.params}'
 
@@ -38,7 +50,8 @@ class DataBlock:
     def get_data(self, lexeme: str):
         scope = self.all_data[self.scope_stack[-1]].scope
         for data in self.all_data:
-            if data.lexeme == lexeme and (data.scope == scope or data.keyword == 'func' or data.scope == 0):
+            if data.lexeme == lexeme and (data.scope == scope or data.keyword == 'func' or data.scope == 0 or
+                                          (data.keyword == 'param' and data.scope == 0)):
                 return data, None
 
         # print(f'Variable {lexeme} not declared')
