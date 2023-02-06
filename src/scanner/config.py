@@ -17,7 +17,7 @@ star_symbol = ['*']
 all_symbols = symbol + equal_symbol + slash_symbol + star_symbol
 new_line = ['\n']
 whitespace = [' ', '\n', '\r', '\t', '\v', '\f']
-keywords = ['if', 'else', 'void', 'int', 'while', "break", 'switch', 'default', 'case', 'return', 'endif']
+keywords = ['if', 'else', 'void', 'int', 'while', "break", 'switch', 'default', 'case', 'return', 'endif', 'output']
 valid_chars = letters + digits + all_symbols + whitespace + ['']
 invalid_chars = [chr(i) for i in range(256) if chr(i) not in valid_chars]
 

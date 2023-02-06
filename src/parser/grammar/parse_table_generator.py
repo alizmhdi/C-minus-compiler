@@ -1,13 +1,13 @@
 import re
 import json
-# import os
+import os
 
 
 # you can uncomment this once you have
 # made sure bison 3.8.2 is installed.
 # os.system('bison grammar.y --report=all')
 # os.system('rm grammar.tab.c')
-
+# print(os.listdir('./src/parser/grammar/'))
 
 def correct_form(token):
     token = re.sub('[\'"]', '', token)
@@ -45,6 +45,7 @@ for rule in x[0].split('\n\n')[1:]:
 
 # extract terminals
 for terminal in x[1].split('\n')[2:]:
+    print("" + str(terminal.split()) + "")
     t = correct_form(terminal.split()[0])
     if t != 'error':  # bison adds an error terminal to the grammar
         table['terminals'].append(t)
@@ -129,5 +130,5 @@ for t in table['non_terminals'] + table['terminals']:
     if t in table['follow']:
         table['follow'][t] = list(table['follow'][t])
 json_object = json.dumps(table, indent=4)
-with open("parser/grammar/table.json", "w") as outfile:
+with open("table.json", "w") as outfile:
     outfile.write(json_object)
