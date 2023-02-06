@@ -11,7 +11,7 @@ class CodeGenerator:
         self.data_block = DataBlock()
         self.temporaries = TemporariesBlock()
         self.break_list = []
-        self.args_num = 0
+        self.args = []
         self.current_call_func = None
         self.function_dict = {
             31: self.jpf,
@@ -43,21 +43,24 @@ class CodeGenerator:
             15: self.add_param,
             16: self.add_param,
             9: self.push_void,
-            67: self.increase_args_num,
-            66: self.increase_args_num,
-            63: self.reset_args_num,
+            67: self.increase_args,
+            66: self.increase_args,
+            63: self.reset_args,
             82: self.save_func,
             83: self.pid_dec,
+            35: self.pop_exp
         }
 
     def pid(self, lexeme):
-        data = self.data_block.get_data(lexeme)
+        data, error = self.data_block.get_data(lexeme)
         self.semantic_stack.push(data.address)
+        if error:
+            raise Exception(error)
 
     def pid_dec(self, lexeme):
         typ = self.semantic_stack.pop()
-        address = self.data_block.create_data(lexeme, typ)
-        self.semantic_stack.push(address)
+        data = self.data_block.create_data(lexeme, typ)
+        self.semantic_stack.push(data.address)
 
     def assign(self):
         value = self.semantic_stack.pop()
@@ -68,7 +71,6 @@ class CodeGenerator:
 
     def pop_exp(self):
         self.semantic_stack.pop()
-        pass
 
     def variable_declaration(self):
         address = self.semantic_stack.pop()
@@ -84,8 +86,9 @@ class CodeGenerator:
         self.program_block.add_instruction(instruction)
         self.data_block.increase_index(size)
         data = self.data_block.get_data_from_address(address)
-        data.set_keyword('array')
+        data.add_type('array')
         data.set_num_args(size)
+        data.set_keyword('array')
 
     def save(self):
         self.semantic_stack.push(self.program_block.last_index)
@@ -99,6 +102,7 @@ class CodeGenerator:
 
     def push_num(self, lexeme):
         temp = self.temporaries.get_temp()
+        self.temporaries.set_type(temp, 'int')
         instruction = Instruction('ASSIGN', f'#{lexeme}', temp, ' ')
         self.program_block.add_instruction(instruction)
         self.semantic_stack.push(temp)
@@ -110,6 +114,9 @@ class CodeGenerator:
         op_1 = self.semantic_stack.pop()
         operator = self.semantic_stack.pop()
         op_2 = self.semantic_stack.pop()
+        error = None
+        if self.get_type(op_1)[0] == 'array' or self.get_type(op_2)[0] == 'array':
+            error = 'Type mismatch in operands, Got array instead of int.'
         temp = self.temporaries.get_temp()
         if operator == '+':
             instruction = Instruction('ADD', op_2, op_1, temp)
@@ -117,6 +124,8 @@ class CodeGenerator:
             instruction = Instruction('SUB', op_2, op_1, temp)
         self.program_block.add_instruction(instruction)
         self.semantic_stack.push(temp)
+        if error:
+            raise Exception(error)
 
     def mult(self):
         op_1 = self.semantic_stack.pop()
@@ -134,8 +143,8 @@ class CodeGenerator:
     def func(self):
         address = self.semantic_stack.get_top()
         data = self.data_block.get_data_from_address(address)
-        data.set_keyword('func')
         self.data_block.add_virtual_row()
+        data.set_keyword('func')
 
     def jp(self):
         address = self.semantic_stack.pop()
@@ -207,7 +216,7 @@ class CodeGenerator:
 
     def break_while(self):
         if len(self.break_list) == 0:
-            raise Exception('Break outside of while')
+            raise Exception("No 'while' or 'switch case' found for 'break'.")
         self.break_list.insert(0, self.program_block.last_index)
         self.program_block.increase_index()
 
@@ -225,6 +234,8 @@ class CodeGenerator:
         arg_result = self.semantic_stack.get_top()
         instruction = Instruction('PRINT', arg_result, ' ', ' ')
         self.program_block.add_instruction(instruction)
+        self.current_call_func = None
+        self.args = []
 
     def label_switch(self):
         self.break_list.insert(0, -1)
@@ -249,27 +260,53 @@ class CodeGenerator:
         self.data_block.end_scope()
         self.semantic_stack.pop()
 
-    def add_param(self):
+    def add_param(self, typ='int'):
         param_address = self.semantic_stack.pop()
         param_data = self.data_block.get_data_from_address(param_address)
-        param_data.set_keyword('param')
+        param_data.add_type(typ)
         func_address = self.semantic_stack.get_top()
         func_data = self.data_block.get_data_from_address(func_address)
         func_data.add_param(len(self.data_block.all_data) - 1)
+        param_data.set_keyword('param')
         # TODO: get index of param from its data
 
-    def increase_args_num(self):
-        self.args_num += 1
+    def increase_args(self):
+        self.args.append(self.semantic_stack.get_top())
 
-    def reset_args_num(self):
+    def reset_args(self):
         func_data = self.data_block.get_data_from_address(self.current_call_func)
-        if len(func_data.params) != self.args_num:
-            raise Exception('Wrong number of arguments')
-        for i in range(self.args_num):
+        error = None
+        if len(func_data.params) != len(self.args):
+            error = f"Mismatch in numbers of arguments of '{func_data.lexeme}'."
+        elif self.check_args_types():
+            type_checked = self.check_args_types()
+            error = f"Mismatch in type of argument 1 of '{func_data.lexeme}'. Expected '{type_checked[1]}' but got '{type_checked[0]}' instead."
+        for i in self.args:
             self.semantic_stack.pop()
         self.current_call_func = None
-        self.args_num = 0
+        self.args = []
+        if error:
+            raise Exception(error)
 
     def save_func(self):
         func_addr = self.semantic_stack.get_top()
         self.current_call_func = func_addr
+
+    def get_type(self, address):
+        if str(address).startswith('@') or str(address).startswith('#'):
+            return 'var', 'int'
+        elif address >= 3000:
+            return self.temporaries.get_type(address)
+        else:
+            data = self.data_block.get_data_from_address(address)
+            return data.keyword, data.type
+
+    def check_args_types(self):
+        func_data = self.data_block.get_data_from_address(self.current_call_func)
+        for i, arg in enumerate(self.args):
+            arg_type = self.get_type(arg)
+            param_data = self.data_block.get_data_from_index(func_data.params[i])
+            if arg_type[1] != param_data.type:
+                return arg_type[1], param_data.type
+
+        return None

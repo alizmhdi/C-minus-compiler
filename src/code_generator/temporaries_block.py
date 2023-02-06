@@ -7,8 +7,8 @@ class TemporariesBlock:
         self.last_index += 1
         return self.last_index
 
-    def set_value(self, address, value):
-        self.temporaries[address] = value
+    def set_type(self, address, typ):
+        self.temporaries[address] = typ
 
-    def get_value(self, address):
-        return self.temporaries[address]
+    def get_type(self, address):
+        return 'var', 'int'

@@ -29,7 +29,9 @@ class Parser:
         self.stack = ['0']
         self.gotos = self.goto_states()
         self.errors = []
+        self.semantic_errors = []
         self.syntax_error_writer = SyntaxErrorWriter('syntax_errors.txt')
+        self.semantic_error_writer = SyntaxErrorWriter('semantic_errors.txt')
         self.parse_tree_writer = ParseTreeWriter('parse_tree.txt')
         self.code_generator_writer = CodeGeneratorWriter('output.txt')
         self.code_generator = CodeGenerator()
@@ -77,9 +79,12 @@ class Parser:
                 self.parse_tree_writer.write(Parser.format_tree(left_rule_node))
                 self.syntax_error_writer.write(self.errors)
                 self.code_generator_writer.write(self.code_generator.program_block)
-                print(self.code_generator.program_block)
-                print("*" * 50)
-                print(self.code_generator.data_block)
+                # print(self.code_generator.program_block)
+                # print("*" * 50)
+                # print(self.code_generator.data_block)
+                # print("*" * 50)
+                # print(''.join(error + "\n" for error in self.semantic_errors))
+                self.semantic_error_writer.write(self.semantic_errors if len(self.semantic_errors) > 0 else ['The input program is semantically correct.'])
                 return
             elif next_move[0] == 'shift':
                 if current_token:
@@ -93,10 +98,15 @@ class Parser:
                 rule = self.grammar[next_move[1]]
                 function = self.code_generator.function_dict.get(int(next_move[1]))
                 if function:
-                    if int(next_move[1]) in [68, 69, 70, 71, 81, 83]:
-                        function(current_token[1])
-                    else:
-                        function()
+                    try:
+                        if int(next_move[1]) in [68, 69, 70, 71, 81, 83]:
+                            function(current_token[1])
+                        elif int(next_move[1]) in [16]:
+                            function('array')
+                        else:
+                            function()
+                    except Exception as exp:
+                        self.semantic_errors.append(f'#{current_token[2]} : Semantic Error! {exp}')
                 left_rule, right_rule = rule[0], rule[2:]
                 left_rule_node = Node(left_rule)
                 if right_rule != ['epsilon']:
